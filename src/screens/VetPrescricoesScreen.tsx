@@ -16,7 +16,7 @@ export default function VetPrescricoesScreen() {
   const veterinarioId = user?.veterinarioId;
   const { data: consultas, isLoading: loadingConsultas } = useConsultasByVeterinario(veterinarioId);
 
-  const consultaIds = useMemo(() => new Set((consultas || []).map((c) => c.id)), [consultas]);
+  const consultaIds = useMemo(() => new Set((consultas || []).map((c) => String(c.id))), [consultas]);
   const petIds = useMemo(
     () => Array.from(new Set((consultas || []).map((c) => c.petId).filter(Boolean))),
     [consultas]
@@ -33,12 +33,12 @@ export default function VetPrescricoesScreen() {
   const loadingReceitas = medicamentosQueries.some((q) => q.isLoading);
 
   const receitas = useMemo(() => {
-    const consultaById = new Map((consultas || []).map((c) => [c.id, c]));
+    const consultaById = new Map((consultas || []).map((c) => [String(c.id), c]));
     const todas = [];
     medicamentosQueries.forEach((q) => {
       (q.data || []).forEach((med) => {
-        if (!med.consultaId || !consultaIds.has(med.consultaId)) return;
-        const consulta = consultaById.get(med.consultaId);
+        if (!med.consultaId || !consultaIds.has(String(med.consultaId))) return;
+        const consulta = consultaById.get(String(med.consultaId));
         todas.push({ ...med, petNome: consulta?.petNome, consultaTitle: consulta?.title });
       });
     });
