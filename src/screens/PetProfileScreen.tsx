@@ -9,14 +9,13 @@ import { usePetProfile } from '../hooks/usePetProfile';
 import { showAlert } from '../utils/alert';
 import { useMedicamentosByPet } from '../hooks/useMedicamentos';
 import { useVacinasByPet } from '../hooks/useVacinas';
-import { calculateHealthScore, getScoreLabel, generateAlerts } from '../services/healthScore';
+import { generateAlerts } from '../services/healthScore';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
 import EmptyState from '../components/EmptyState';
 import SectionHeader from '../components/SectionHeader';
 import AlertBanner from '../components/AlertBanner';
-import HealthScoreRing from '../components/HealthScoreRing';
 
 function InfoRow({ label, value, style }) {
   if (!value) return null;
@@ -114,7 +113,6 @@ export default function PetProfileScreen({ navigation }) {
   }
 
   const petVaccines = vaccines || [];
-  const score = calculateHealthScore(pet, petVaccines, reminders);
   const alerts = generateAlerts(pet, petVaccines);
   const doneVaccines = petVaccines.filter(v => v.status === 'done').length;
   const overdueCount = petVaccines.filter(v => v.status === 'overdue').length;
@@ -147,10 +145,6 @@ export default function PetProfileScreen({ navigation }) {
                 {pet.sex && <Badge status="active" label={pet.sex} />}
                 {pet.age && <Badge status="active" label={`${pet.age} anos`} />}
               </View>
-            </View>
-            <View style={styles.heroRight}>
-              <HealthScoreRing score={score} size={100} />
-              <Text style={styles.heroScoreLabel}>Score de Saúde</Text>
             </View>
           </View>
         </View>
@@ -343,13 +337,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   heroBadges: { flexDirection: 'row', gap: SPACING.xs },
-  heroRight: { alignItems: 'center' },
-  heroScoreLabel: {
-    fontSize: FONT_SIZES.xs,
-    color: 'rgba(255,255,255,0.6)',
-    marginTop: SPACING.xs,
-    fontWeight: FONT_WEIGHTS.medium,
-  },
 
   statsRow: {
     flexDirection: 'row',

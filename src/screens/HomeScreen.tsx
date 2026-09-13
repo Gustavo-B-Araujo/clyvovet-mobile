@@ -6,27 +6,22 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { usePetProfile } from '../hooks/usePetProfile';
-import { useMedicamentosByPet } from '../hooks/useMedicamentos';
 import { useVacinasByPet } from '../hooks/useVacinas';
 import { useAuth } from '../context/AuthContext';
-import { calculateHealthScore, generateAlerts } from '../services/healthScore';
+import { generateAlerts } from '../services/healthScore';
 import { HEALTH_TIPS } from '../constants/appContent';
 import Card from '../components/Card';
 import AlertBanner from '../components/AlertBanner';
 import SectionHeader from '../components/SectionHeader';
-import HealthScoreRing from '../components/HealthScoreRing';
 import Badge from '../components/Badge';
 
 export default function HomeScreen({ navigation }) {
   const { user } = useAuth();
   const { pet, hasPet, loading } = usePetProfile();
-  const { data: medicamentos } = useMedicamentosByPet(pet?.id);
   const { data: vaccines } = useVacinasByPet(pet?.id);
 
   const firstName = user?.nome?.trim().split(' ')[0] || '';
-  const reminders = medicamentos || [];
   const petVaccines = vaccines || [];
-  const score = calculateHealthScore(pet, petVaccines, reminders);
   const alerts = generateAlerts(pet, petVaccines);
   const overdueVaccines = petVaccines.filter(v => v.status === 'overdue');
   const upcomingVaccines = petVaccines.filter(v => v.status === 'upcoming');
@@ -80,7 +75,6 @@ export default function HomeScreen({ navigation }) {
                     </Text>
                   </View>
                 </View>
-                <HealthScoreRing score={score} size={88} />
               </View>
             </View>
           </TouchableOpacity>

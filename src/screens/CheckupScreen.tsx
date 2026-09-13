@@ -5,14 +5,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { usePetProfile } from '../hooks/usePetProfile';
-import { useMedicamentosByPet } from '../hooks/useMedicamentos';
 import { useVacinasByPet } from '../hooks/useVacinas';
-import { calculateHealthScore, getScoreLabel, generateAlerts } from '../services/healthScore';
+import { generateAlerts } from '../services/healthScore';
 import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
 import AlertBanner from '../components/AlertBanner';
 import Badge from '../components/Badge';
-import HealthScoreRing from '../components/HealthScoreRing';
 
 const CHECKUP_ITEMS = [
   {
@@ -69,12 +67,8 @@ const CHECKUP_ITEMS = [
 
 export default function CheckupScreen({ navigation }) {
   const { pet } = usePetProfile();
-  const { data: medicamentos } = useMedicamentosByPet(pet?.id);
   const { data: vaccines } = useVacinasByPet(pet?.id);
-  const reminders = medicamentos || [];
   const petVaccines = vaccines || [];
-  const score = calculateHealthScore(pet, petVaccines, reminders);
-  const { label: scoreLabel, color: scoreColor } = getScoreLabel(score);
 
   const [checked, setChecked] = useState({});
 
@@ -95,21 +89,6 @@ export default function CheckupScreen({ navigation }) {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Score Card */}
-        <Card style={styles.scoreCard} variant="elevated">
-          <View style={styles.scoreRow}>
-            <View style={styles.scoreLeft}>
-              <Text style={styles.scoreTitle}>Score de Saúde</Text>
-              <Text style={styles.scorePet}>{pet?.name || 'Seu pet'}</Text>
-              <View style={styles.scoreBar}>
-                <View style={[styles.scoreBarFill, { width: `${score}%`, backgroundColor: scoreColor }]} />
-              </View>
-              <Text style={[styles.scoreLabel, { color: scoreColor }]}>{scoreLabel} — {score}/100</Text>
-            </View>
-            <HealthScoreRing score={score} size={100} />
-          </View>
-        </Card>
-
         {/* Completion progress */}
         <Card style={styles.progressCard}>
           <View style={styles.progressRow}>
@@ -214,43 +193,6 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
-
-  scoreCard: { marginBottom: SPACING.md },
-  scoreRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  scoreLeft: { flex: 1, marginRight: SPACING.md },
-  scoreTitle: {
-    fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
-    fontWeight: FONT_WEIGHTS.semibold,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  scorePet: {
-    fontSize: FONT_SIZES.xl,
-    fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
-    marginBottom: SPACING.sm,
-  },
-  scoreBar: {
-    height: 8,
-    backgroundColor: COLORS.primaryPastel,
-    borderRadius: BORDER_RADIUS.full,
-    marginBottom: SPACING.xs,
-    overflow: 'hidden',
-  },
-  scoreBarFill: {
-    height: '100%',
-    borderRadius: BORDER_RADIUS.full,
-  },
-  scoreLabel: {
-    fontSize: FONT_SIZES.sm,
-    fontWeight: FONT_WEIGHTS.bold,
-  },
 
   progressCard: { marginBottom: SPACING.lg },
   progressRow: {
