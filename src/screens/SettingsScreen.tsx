@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
-  TouchableOpacity, Switch,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
@@ -37,9 +37,6 @@ export default function SettingsScreen({ navigation }) {
   const { pet, hasPet } = usePetProfile();
   const { user, logout } = useAuth();
   const { tutor } = useTutor();
-  const [notifications, setNotifications] = useState(true);
-  const [weeklyReport, setWeeklyReport] = useState(false);
-  const [healthTips, setHealthTips] = useState(true);
 
   const handleLogout = () => {
     showAlert(
@@ -93,53 +90,6 @@ export default function SettingsScreen({ navigation }) {
           </View>
           <Text style={styles.profileChevron}>›</Text>
         </TouchableOpacity>
-
-        {/* Notificações */}
-        <View style={styles.section}>
-          <SectionHeader title="Notificações" />
-          <Card>
-            <SettingRow
-              icon="🔔"
-              label="Notificações ativas"
-              subtitle="Alertas de vacinas e lembretes"
-              rightElement={
-                <Switch
-                  value={notifications}
-                  onValueChange={setNotifications}
-                  trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-                  thumbColor={notifications ? COLORS.primary : COLORS.textMuted}
-                />
-              }
-            />
-            <SettingRow
-              icon="📊"
-              label="Relatório semanal"
-              subtitle="Resumo de saúde toda segunda-feira"
-              rightElement={
-                <Switch
-                  value={weeklyReport}
-                  onValueChange={setWeeklyReport}
-                  trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-                  thumbColor={weeklyReport ? COLORS.primary : COLORS.textMuted}
-                />
-              }
-            />
-            <SettingRow
-              icon="💡"
-              label="Dicas de saúde"
-              subtitle="Insights personalizados diários"
-              rightElement={
-                <Switch
-                  value={healthTips}
-                  onValueChange={setHealthTips}
-                  trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-                  thumbColor={healthTips ? COLORS.primary : COLORS.textMuted}
-                />
-              }
-              isLast
-            />
-          </Card>
-        </View>
 
         {/* Pet */}
         <View style={styles.section}>
