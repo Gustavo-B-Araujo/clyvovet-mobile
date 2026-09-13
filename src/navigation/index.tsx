@@ -26,6 +26,7 @@ import VetConsultasScreen from '../screens/VetConsultasScreen';
 import VetConsultaDetailScreen from '../screens/VetConsultaDetailScreen';
 import VetConsultaFormScreen from '../screens/VetConsultaFormScreen';
 import VetPrescricaoFormScreen from '../screens/VetPrescricaoFormScreen';
+import VetEditAccountScreen from '../screens/VetEditAccountScreen';
 import VetPrescricoesScreen from '../screens/VetPrescricoesScreen';
 import VetSettingsScreen from '../screens/VetSettingsScreen';
 
@@ -301,6 +302,16 @@ function VetStack() {
         name="VetPrescricaoForm"
         component={VetPrescricaoFormScreen}
         options={{ title: 'Nova Receita' }}
+      />
+      <VetStackNav.Screen
+        name="VetEditAccount"
+        component={VetEditAccountScreen}
+        options={{ title: 'Editar dados' }}
+      />
+      <VetStackNav.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{ title: 'Alterar senha' }}
       />
     </VetStackNav.Navigator>
   );

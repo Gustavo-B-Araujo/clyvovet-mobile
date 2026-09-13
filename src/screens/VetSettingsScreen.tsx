@@ -31,7 +31,7 @@ function SettingRow({ icon, label, subtitle, onPress, isLast = false }) {
   );
 }
 
-export default function VetSettingsScreen() {
+export default function VetSettingsScreen({ navigation }) {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
@@ -42,6 +42,14 @@ export default function VetSettingsScreen() {
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Sair', style: 'destructive', onPress: () => logout() },
       ]
+    );
+  };
+
+  const handleAbout = () => {
+    showAlert(
+      '🐾 CLYVO VET',
+      'Versão 1.0.0\n\nCLYVO é uma plataforma de saúde animal contínua e inteligente, desenvolvida para transformar a jornada do pet em uma experiência preventiva, integrada e humanizada.\n\n© 2025 CLYVO VET',
+      [{ text: 'Fechar' }]
     );
   };
 
@@ -66,10 +74,40 @@ export default function VetSettingsScreen() {
           <SectionHeader title="Conta" />
           <Card>
             <SettingRow
+              icon="✏️"
+              label="Editar dados"
+              subtitle="Nome e telefone"
+              onPress={() => navigation.navigate('VetEditAccount')}
+            />
+            <SettingRow
+              icon="🔑"
+              label="Alterar senha"
+              subtitle="Trocar sua senha de login"
+              onPress={() => navigation.navigate('ChangePassword')}
+            />
+            <SettingRow
               icon="🚪"
               label="Sair"
               subtitle="Encerrar sessão"
               onPress={handleLogout}
+              isLast
+            />
+          </Card>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="Aplicativo" />
+          <Card>
+            <SettingRow
+              icon="ℹ️"
+              label="Sobre o CLYVO"
+              subtitle="Versão 1.0.0"
+              onPress={handleAbout}
+            />
+            <SettingRow
+              icon="🔒"
+              label="Privacidade"
+              subtitle="Login protegido por autenticação JWT da API ClyvoVet"
               isLast
             />
           </Card>

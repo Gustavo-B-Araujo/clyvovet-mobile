@@ -7,3 +7,13 @@ export async function listVeterinarios() {
   });
   return data.content;
 }
+
+export async function getVeterinarioById(id) {
+  const { data } = await apiClient.get(`/veterinarios/${id}`);
+  return data;
+}
+
+export async function updateVeterinario(id, veterinario) {
+  const { data } = await apiClient.put(`/veterinarios/${id}`, veterinario);
+  return data;
+}
