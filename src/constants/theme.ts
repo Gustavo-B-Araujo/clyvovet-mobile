@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const COLORS = {
   // Primárias
   primary: '#6C3FC5',
@@ -91,33 +93,37 @@ export const BORDER_RADIUS = {
   full: 9999,
 };
 
+const hexToRgba = (hex: string, alpha: number) => {
+  const value = hex.replace('#', '');
+  const r = parseInt(value.substring(0, 2), 16);
+  const g = parseInt(value.substring(2, 4), 16);
+  const b = parseInt(value.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const createShadow = (
+  color: string,
+  offset: { width: number; height: number },
+  opacity: number,
+  radius: number,
+  elevation: number
+) =>
+  Platform.select({
+    web: {
+      boxShadow: `${offset.width}px ${offset.height}px ${radius}px ${hexToRgba(color, opacity)}`,
+    },
+    default: {
+      shadowColor: color,
+      shadowOffset: offset,
+      shadowOpacity: opacity,
+      shadowRadius: radius,
+      elevation,
+    },
+  });
+
 export const SHADOWS = {
-  sm: {
-    shadowColor: '#6C3FC5',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  md: {
-    shadowColor: '#6C3FC5',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  lg: {
-    shadowColor: '#6C3FC5',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.16,
-    shadowRadius: 20,
-    elevation: 8,
-  },
-  danger: {
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 4,
-  },
+  sm: createShadow('#6C3FC5', { width: 0, height: 2 }, 0.08, 6, 2),
+  md: createShadow('#6C3FC5', { width: 0, height: 4 }, 0.12, 12, 4),
+  lg: createShadow('#6C3FC5', { width: 0, height: 8 }, 0.16, 20, 8),
+  danger: createShadow('#EF4444', { width: 0, height: 4 }, 0.2, 12, 4),
 };

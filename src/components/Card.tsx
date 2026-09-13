@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 import { COLORS, BORDER_RADIUS, SPACING, SHADOWS } from '../constants/theme';
 
 export default function Card({ children, style, variant = 'default', noPadding = false }) {
@@ -28,8 +28,10 @@ const styles = StyleSheet.create({
     ...SHADOWS.lg,
   },
   flat: {
-    shadowOpacity: 0,
-    elevation: 0,
+    ...Platform.select({
+      web: { boxShadow: 'none' },
+      default: { shadowOpacity: 0, elevation: 0 },
+    }),
     borderWidth: 1,
     borderColor: COLORS.border,
   },
