@@ -4,8 +4,8 @@ import { saveSession, loadSession, clearSession } from '../storage';
 
 const AuthContext = createContext(null);
 
-function toUser({ nome, email, role, tutorId }) {
-  return { nome, email, role, tutorId };
+function toUser({ nome, email, role, tutorId, veterinarioId }) {
+  return { nome, email, role, tutorId, veterinarioId };
 }
 
 export function AuthProvider({ children }) {

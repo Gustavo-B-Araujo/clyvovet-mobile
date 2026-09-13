@@ -22,8 +22,13 @@ import RemindersScreen from '../screens/RemindersScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import EditAccountScreen from '../screens/EditAccountScreen';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
+import VetHomeScreen from '../screens/VetHomeScreen';
+import VetConsultasScreen from '../screens/VetConsultasScreen';
+import VetPrescricoesScreen from '../screens/VetPrescricoesScreen';
+import VetSettingsScreen from '../screens/VetSettingsScreen';
 
 const Stack = createNativeStackNavigator();
+const VetStackNav = createNativeStackNavigator();
 const AuthStackNav = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -224,6 +229,75 @@ function AppStack() {
   );
 }
 
+function VetTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: COLORS.white,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border,
+          height: 72,
+          paddingBottom: 8,
+          paddingTop: 4,
+          ...SHADOWS.lg,
+        },
+        tabBarShowLabel: false,
+      }}
+    >
+      <Tab.Screen
+        name="VetHome"
+        component={VetHomeScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🗓️" label="Agenda" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VetConsultas"
+        component={VetConsultasScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🩺" label="Consultas" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VetPrescricoes"
+        component={VetPrescricoesScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="💊" label="Receitas" focused={focused} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VetSettings"
+        component={VetSettingsScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="⚙️" label="Config" focused={focused} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+function VetStack() {
+  return (
+    <VetStackNav.Navigator screenOptions={screenOptions}>
+      <VetStackNav.Screen
+        name="VetTabs"
+        component={VetTabs}
+        options={{ headerShown: false }}
+      />
+    </VetStackNav.Navigator>
+  );
+}
+
 export default function AppNavigator() {
   const { user, initializing } = useAuth();
 
@@ -235,9 +309,14 @@ export default function AppNavigator() {
     );
   }
 
+  function renderAppStack() {
+    if (user.role === 'VETERINARIO') return <VetStack />;
+    return <AppStack />;
+  }
+
   return (
     <NavigationContainer>
-      {user ? <AppStack /> : <AuthStack />}
+      {user ? renderAppStack() : <AuthStack />}
     </NavigationContainer>
   );
 }

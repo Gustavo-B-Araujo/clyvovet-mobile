@@ -44,6 +44,7 @@ export function mapConsulta(consulta) {
     dataHora: consulta.dataHora,
     vet: consulta.veterinarioNome || '',
     veterinarioId: consulta.veterinarioId,
+    petNome: consulta.petNome || '',
     description: consulta.diagnostico || consulta.observacoes || consulta.tratamento || '',
     observacoes: consulta.observacoes || '',
     diagnostico: consulta.diagnostico || '',
