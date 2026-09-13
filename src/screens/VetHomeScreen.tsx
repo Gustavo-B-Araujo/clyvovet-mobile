@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS } from '../constants/theme';
+import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
 import { useConsultasByVeterinario } from '../hooks/useConsultas';
 import { STATUS_CONSULTA_LABELS } from '../api/consultas';
@@ -29,6 +29,16 @@ export default function VetHomeScreen() {
         <View style={styles.header}>
           <Text style={styles.greeting}>Olá, {user?.nome?.split(' ')[0] || 'Doutor(a)'} 👋</Text>
           <Text style={styles.subGreeting}>Aqui está sua agenda de hoje</Text>
+        </View>
+
+        <View style={styles.profileBanner}>
+          <View style={styles.profileAvatar}>
+            <Text style={styles.profileAvatarEmoji}>👨‍⚕️</Text>
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{user?.nome || 'Veterinário(a)'}</Text>
+            <Text style={styles.profileMeta}>{user?.email}</Text>
+          </View>
         </View>
 
         <SectionHeader title="Consultas de hoje" />
@@ -82,6 +92,35 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   subGreeting: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, marginTop: 2 },
+
+  profileBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS['2xl'],
+    padding: SPACING.base,
+    marginBottom: SPACING.lg,
+    gap: SPACING.md,
+    ...SHADOWS.md,
+  },
+  profileAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  profileAvatarEmoji: { fontSize: 26 },
+  profileInfo: { flex: 1 },
+  profileName: {
+    fontSize: FONT_SIZES.base,
+    fontWeight: FONT_WEIGHTS.bold,
+    color: COLORS.white,
+  },
+  profileMeta: { fontSize: FONT_SIZES.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
 
   warningText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, lineHeight: 20 },
 
