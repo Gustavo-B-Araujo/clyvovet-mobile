@@ -22,8 +22,9 @@ import RemindersScreen from '../screens/RemindersScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import EditAccountScreen from '../screens/EditAccountScreen';
 import ChangePasswordScreen from '../screens/ChangePasswordScreen';
-import VetHomeScreen from '../screens/VetHomeScreen';
 import VetConsultasScreen from '../screens/VetConsultasScreen';
+import VetConsultaDetailScreen from '../screens/VetConsultaDetailScreen';
+import VetConsultaFormScreen from '../screens/VetConsultaFormScreen';
 import VetPrescricoesScreen from '../screens/VetPrescricoesScreen';
 import VetSettingsScreen from '../screens/VetSettingsScreen';
 
@@ -247,15 +248,6 @@ function VetTabs() {
       }}
     >
       <Tab.Screen
-        name="VetHome"
-        component={VetHomeScreen}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🗓️" label="Agenda" focused={focused} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="VetConsultas"
         component={VetConsultasScreen}
         options={{
@@ -293,6 +285,16 @@ function VetStack() {
         name="VetTabs"
         component={VetTabs}
         options={{ headerShown: false }}
+      />
+      <VetStackNav.Screen
+        name="VetConsultaDetail"
+        component={VetConsultaDetailScreen}
+        options={{ title: 'Detalhes da consulta' }}
+      />
+      <VetStackNav.Screen
+        name="VetConsultaForm"
+        component={VetConsultaFormScreen}
+        options={{ title: 'Nova Consulta' }}
       />
     </VetStackNav.Navigator>
   );
