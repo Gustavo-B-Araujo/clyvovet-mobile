@@ -43,7 +43,7 @@ export default function HomeScreen({ navigation }) {
   const quickActions = [
     { icon: '💉', label: 'Vacinas', route: 'Vaccines', color: COLORS.primaryPastel },
     { icon: '📋', label: 'Histórico', route: 'History', color: COLORS.accentPastel },
-    { icon: '💊', label: 'Medicamentos', route: 'Reminders', color: COLORS.successLight },
+    { icon: '💊', label: 'Medicamentos', route: 'Medications', color: COLORS.successLight },
     { icon: '🚨', label: 'Emergência', route: 'Emergency', color: COLORS.dangerLight },
   ];
 

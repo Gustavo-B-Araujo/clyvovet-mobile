@@ -187,6 +187,11 @@ function AppStack() {
         options={{ title: 'Histórico Clínico' }}
       />
       <Stack.Screen
+        name="Medications"
+        component={RemindersScreen}
+        options={{ title: 'Medicamentos' }}
+      />
+      <Stack.Screen
         name="EditAccount"
         component={EditAccountScreen}
         options={{ title: 'Editar dados' }}
