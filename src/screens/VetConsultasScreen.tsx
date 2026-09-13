@@ -63,12 +63,12 @@ export default function VetConsultasScreen({ navigation }) {
           />
         ) : (
           consultasOrdenadas.map(consulta => (
-            <TouchableOpacity
-              key={consulta.id}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('VetConsultaDetail', { consulta })}
-            >
-              <Card style={styles.consultaCard}>
+            <Card key={consulta.id} style={styles.consultaCard} noPadding>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('VetConsultaDetail', { consulta })}
+                style={styles.consultaTouchable}
+              >
                 <View style={styles.consultaRow}>
                   <View style={styles.consultaInfo}>
                     <Text style={styles.consultaPet}>{consulta.petNome || 'Pet não identificado'}</Text>
@@ -80,8 +80,16 @@ export default function VetConsultasScreen({ navigation }) {
                 {consulta.observacoes ? (
                   <Text style={styles.consultaDesc} numberOfLines={2}>{consulta.observacoes}</Text>
                 ) : null}
-              </Card>
-            </TouchableOpacity>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('VetPrescricaoForm', { consulta })}
+                style={styles.addReceitaRow}
+              >
+                <Text style={styles.addReceitaText}>+ Adicionar receita</Text>
+              </TouchableOpacity>
+            </Card>
           ))
         )}
 
@@ -130,6 +138,7 @@ const styles = StyleSheet.create({
   warningText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, lineHeight: 20 },
 
   consultaCard: { marginBottom: SPACING.sm },
+  consultaTouchable: { padding: SPACING.base },
   consultaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -154,5 +163,17 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     marginTop: SPACING.sm,
     lineHeight: 18,
+  },
+
+  addReceitaRow: {
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.base,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.divider,
+  },
+  addReceitaText: {
+    fontSize: FONT_SIZES.sm,
+    fontWeight: FONT_WEIGHTS.semibold,
+    color: COLORS.primary,
   },
 });
