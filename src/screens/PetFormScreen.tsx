@@ -9,6 +9,7 @@ import { usePetProfile } from '../hooks/usePetProfile';
 import { ESPECIE_OPTIONS, SEXO_OPTIONS } from '../api/pets';
 import { showAlert } from '../utils/alert';
 import Input from '../components/Input';
+import DatePickerField from '../components/DatePickerField';
 import Button from '../components/Button';
 import SelectOption from '../components/SelectOption';
 import SectionHeader from '../components/SectionHeader';
@@ -149,12 +150,11 @@ export default function PetFormScreen({ navigation, route }) {
                 onChangeText={(v) => setField('breed', v)}
                 placeholder="Ex: Golden Retriever, SRD..."
               />
-              <Input
+              <DatePickerField
                 label="Data de nascimento"
                 value={form.birthDate}
-                onChangeText={(v) => setField('birthDate', v)}
-                placeholder="AAAA-MM-DD"
-                helper="Formato: 2021-05-10"
+                onChange={(v) => setField('birthDate', v)}
+                maximumDate={new Date()}
               />
               <Input
                 label="Peso (kg)"
