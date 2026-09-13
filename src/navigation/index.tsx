@@ -309,14 +309,17 @@ export default function AppNavigator() {
     );
   }
 
-  function renderAppStack() {
-    if (user.role === 'VETERINARIO') return <VetStack />;
-    return <AppStack />;
+  if (!user) {
+    return (
+      <NavigationContainer>
+        <AuthStack />
+      </NavigationContainer>
+    );
   }
 
   return (
     <NavigationContainer>
-      {user ? renderAppStack() : <AuthStack />}
+      {user.role === 'VETERINARIO' ? <VetStack /> : <AppStack />}
     </NavigationContainer>
   );
 }
