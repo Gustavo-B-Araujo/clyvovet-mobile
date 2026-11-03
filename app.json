@@ -24,6 +24,7 @@
       [
         "expo-splash-screen",
         {
+          "image": "./src/assets/icon.png",
           "backgroundColor": "#6C3FC5",
           "resizeMode": "contain"
         }
@@ -32,6 +33,11 @@
     ],
     "experiments": {
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d46c8307-8721-4790-bb18-f4916b659560"
+      }
     }
   }
 }
