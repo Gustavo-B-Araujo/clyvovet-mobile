@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { showAlert } from '../utils/alert';
 import { useMedicamentosByPet } from '../hooks/useMedicamentos';
@@ -18,6 +19,8 @@ import SectionHeader from '../components/SectionHeader';
 import AlertBanner from '../components/AlertBanner';
 
 function InfoRow({ label, value, style }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   if (!value) return null;
   return (
     <View style={[styles.infoRow, style]}>
@@ -28,6 +31,8 @@ function InfoRow({ label, value, style }) {
 }
 
 function PetSwitcher({ pets, selectedId, onSelect, onAddNew }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <ScrollView
       horizontal
@@ -64,6 +69,8 @@ function PetSwitcher({ pets, selectedId, onSelect, onAddNew }) {
 }
 
 export default function PetProfileScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet, pets, selectPet, hasPet, loading, removePet } = usePetProfile();
   const { data: medicamentos } = useMedicamentosByPet(pet?.id);
   const { data: vaccines, isLoading: vaccinesLoading } = useVacinasByPet(pet?.id);
@@ -93,7 +100,7 @@ export default function PetProfileScreen({ navigation }) {
   if (loading) {
     return (
       <SafeAreaView style={[styles.safe, styles.loadingContainer]} edges={['bottom']}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -161,7 +168,7 @@ export default function PetProfileScreen({ navigation }) {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={[styles.statNum, overdueCount > 0 && { color: COLORS.danger }]}>
+            <Text style={[styles.statNum, overdueCount > 0 && { color: colors.danger }]}>
               {overdueCount}
             </Text>
             <Text style={styles.statLabel}>Atrasos</Text>
@@ -237,8 +244,8 @@ export default function PetProfileScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   loadingContainer: { alignItems: 'center', justifyContent: 'center' },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -253,35 +260,35 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.full,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     maxWidth: 160,
   },
   switcherChipActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryPastel,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPastel,
   },
   switcherEmoji: { fontSize: 16 },
   switcherName: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.medium,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
   },
-  switcherNameActive: { color: COLORS.primary, fontWeight: FONT_WEIGHTS.bold },
+  switcherNameActive: { color: colors.primary, fontWeight: FONT_WEIGHTS.bold },
   switcherAddChip: {
     borderStyle: 'dashed',
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.white,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
   },
   switcherAddIcon: { fontSize: 14 },
   switcherAddText: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
   },
 
   hero: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.lg,
     marginBottom: SPACING.md,
@@ -293,7 +300,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: colors.primaryLight,
     opacity: 0.25,
     top: -70,
     right: -50,
@@ -303,7 +310,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: COLORS.accent,
+    backgroundColor: colors.accent,
     opacity: 0.12,
     bottom: -30,
     left: 20,
@@ -329,7 +336,7 @@ const styles = StyleSheet.create({
   heroName: {
     fontSize: FONT_SIZES['2xl'],
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.white,
+    color: colors.white,
   },
   heroBreed: {
     fontSize: FONT_SIZES.sm,
@@ -340,7 +347,7 @@ const styles = StyleSheet.create({
 
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.base,
     marginBottom: SPACING.lg,
@@ -350,15 +357,15 @@ const styles = StyleSheet.create({
   statNum: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.primary,
+    color: colors.primary,
   },
   statLabel: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.medium,
     marginTop: 2,
   },
-  statDivider: { width: 1, backgroundColor: COLORS.border },
+  statDivider: { width: 1, backgroundColor: colors.border },
 
   section: { marginBottom: SPACING.lg },
 
@@ -368,17 +375,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
   lastInfoRow: { borderBottomWidth: 0, paddingBottom: 0 },
   infoLabel: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.medium,
   },
   infoValue: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: FONT_WEIGHTS.semibold,
     maxWidth: '55%',
     textAlign: 'right',

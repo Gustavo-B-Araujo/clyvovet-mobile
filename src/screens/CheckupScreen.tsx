@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { useVacinasByPet } from '../hooks/useVacinas';
 import { generateAlerts } from '../services/healthScore';
@@ -66,6 +67,8 @@ const CHECKUP_ITEMS = [
 ];
 
 export default function CheckupScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet } = usePetProfile();
   const { data: vaccines } = useVacinasByPet(pet?.id);
   const petVaccines = vaccines || [];
@@ -189,8 +192,8 @@ export default function CheckupScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 
@@ -205,31 +208,31 @@ const styles = StyleSheet.create({
   progressTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
-  progressSub: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, marginTop: 2 },
+  progressSub: { fontSize: FONT_SIZES.xs, color: colors.textMuted, marginTop: 2 },
   progressCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
     alignItems: 'center',
     justifyContent: 'center',
   },
   progressPct: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.primary,
+    color: colors.primary,
   },
   progressBarBg: {
     height: 6,
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
     borderRadius: BORDER_RADIUS.full,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS.full,
   },
 
@@ -243,16 +246,16 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     paddingBottom: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
   categoryIcon: { fontSize: 22 },
   categoryInfo: { flex: 1 },
   categoryTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
-  categoryProgress: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, marginTop: 1 },
+  categoryProgress: { fontSize: FONT_SIZES.xs, color: colors.textMuted, marginTop: 1 },
   allDoneIcon: { fontSize: 20 },
   categoryItems: { gap: SPACING.sm },
 
@@ -266,23 +269,23 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
   },
   checkboxChecked: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
-  checkmark: { color: COLORS.white, fontSize: 13, fontWeight: FONT_WEIGHTS.bold },
+  checkmark: { color: colors.white, fontSize: 13, fontWeight: FONT_WEIGHTS.bold },
   checkLabel: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     flex: 1,
   },
   checkLabelDone: {
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     textDecorationLine: 'line-through',
   },
 
@@ -290,7 +293,7 @@ const styles = StyleSheet.create({
   guideTitle: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.md,
   },
   guideRow: {
@@ -302,7 +305,7 @@ const styles = StyleSheet.create({
   guideText: {
     flex: 1,
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
     marginTop: 2,
   },

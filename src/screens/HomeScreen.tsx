@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { useVacinasByPet } from '../hooks/useVacinas';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +17,8 @@ import SectionHeader from '../components/SectionHeader';
 import Badge from '../components/Badge';
 
 export default function HomeScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { user } = useAuth();
   const { pet, hasPet, loading } = usePetProfile();
   const { data: vaccines } = useVacinasByPet(pet?.id);
@@ -30,16 +33,16 @@ export default function HomeScreen({ navigation }) {
   if (loading) {
     return (
       <SafeAreaView style={[styles.safe, styles.loadingContainer]} edges={['top']}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
 
   const quickActions = [
-    { icon: '💉', label: 'Vacinas', route: 'Vaccines', color: COLORS.primaryPastel },
-    { icon: '📋', label: 'Histórico', route: 'History', color: COLORS.accentPastel },
-    { icon: '💊', label: 'Medicamentos', route: 'Medications', color: COLORS.successLight },
-    { icon: '🚨', label: 'Emergência', route: 'Emergency', color: COLORS.dangerLight },
+    { icon: '💉', label: 'Vacinas', route: 'Vaccines', color: colors.primaryPastel },
+    { icon: '📋', label: 'Histórico', route: 'History', color: colors.accentPastel },
+    { icon: '💊', label: 'Medicamentos', route: 'Medications', color: colors.successLight },
+    { icon: '🚨', label: 'Emergência', route: 'Emergency', color: colors.dangerLight },
   ];
 
   return (
@@ -139,13 +142,13 @@ export default function HomeScreen({ navigation }) {
                 </View>
                 <View style={styles.vaccineStatusDivider} />
                 <View style={styles.vaccineStatusItem}>
-                  <Text style={[styles.vaccineStatusNum, { color: COLORS.danger }]}>{overdueVaccines.length}</Text>
+                  <Text style={[styles.vaccineStatusNum, { color: colors.danger }]}>{overdueVaccines.length}</Text>
                   <Text style={styles.vaccineStatusLabel}>Atrasadas</Text>
                   <Badge status="overdue" />
                 </View>
                 <View style={styles.vaccineStatusDivider} />
                 <View style={styles.vaccineStatusItem}>
-                  <Text style={[styles.vaccineStatusNum, { color: COLORS.info }]}>{upcomingVaccines.length}</Text>
+                  <Text style={[styles.vaccineStatusNum, { color: colors.info }]}>{upcomingVaccines.length}</Text>
                   <Text style={styles.vaccineStatusLabel}>Próximas</Text>
                   <Badge status="upcoming" />
                 </View>
@@ -186,8 +189,8 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   loadingContainer: { alignItems: 'center', justifyContent: 'center' },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -198,19 +201,19 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.medium,
   },
   clinicName: {
     fontSize: FONT_SIZES['2xl'],
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
   },
 
   heroCard: {
     borderRadius: BORDER_RADIUS['2xl'],
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     padding: SPACING.lg,
     marginBottom: SPACING.lg,
     overflow: 'hidden',
@@ -221,7 +224,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: colors.primaryLight,
     opacity: 0.3,
     top: -60,
     right: -40,
@@ -251,7 +254,7 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.white,
+    color: colors.white,
   },
   petBreed: {
     fontSize: FONT_SIZES.sm,
@@ -267,23 +270,23 @@ const styles = StyleSheet.create({
   noPetCard: {
     borderRadius: BORDER_RADIUS['2xl'],
     borderWidth: 2,
-    borderColor: COLORS.primaryPastel,
+    borderColor: colors.primaryPastel,
     borderStyle: 'dashed',
     padding: SPACING['2xl'],
     marginBottom: SPACING.lg,
     alignItems: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
   },
   noPetEmoji: { fontSize: 40, marginBottom: SPACING.sm },
   noPetTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     marginBottom: 4,
   },
   noPetSub: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     textAlign: 'center',
   },
 
@@ -305,7 +308,7 @@ const styles = StyleSheet.create({
   quickLabel: {
     fontSize: FONT_SIZES.xs,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     textAlign: 'center',
   },
 
@@ -318,33 +321,33 @@ const styles = StyleSheet.create({
   vaccineStatusNum: {
     fontSize: FONT_SIZES['3xl'],
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.success,
+    color: colors.success,
   },
   vaccineStatusLabel: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.medium,
   },
   vaccineStatusDivider: {
     width: 1,
     height: 50,
-    backgroundColor: COLORS.border,
+    backgroundColor: colors.border,
   },
 
   tipCard: {
     borderLeftWidth: 4,
-    borderLeftColor: COLORS.primary,
+    borderLeftColor: colors.primary,
   },
   tipIcon: { fontSize: 28, marginBottom: SPACING.sm },
   tipTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
   },
   tipDescription: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
     marginBottom: SPACING.sm,
   },
@@ -354,7 +357,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
     borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.base,
     marginBottom: SPACING.sm,
@@ -362,16 +365,16 @@ const styles = StyleSheet.create({
   historyBannerTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primaryDark,
+    color: colors.primaryDark,
     marginBottom: 2,
   },
   historyBannerSub: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.primary,
+    color: colors.primary,
   },
   historyArrow: {
     fontSize: FONT_SIZES.xl,
-    color: COLORS.primary,
+    color: colors.primary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });

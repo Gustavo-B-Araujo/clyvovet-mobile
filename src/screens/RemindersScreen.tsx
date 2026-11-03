@@ -4,7 +4,8 @@ import {
   TouchableOpacity, Switch, Modal, Pressable, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { showAlert } from '../utils/alert';
 import {
@@ -31,10 +32,12 @@ function emptyForm() {
 }
 
 function MedicamentoCard({ medicamento, onToggle, onDelete }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <Card style={[styles.reminderCard, !medicamento.active && styles.inactiveCard]}>
       <View style={styles.reminderRow}>
-        <View style={[styles.reminderIcon, { backgroundColor: medicamento.active ? COLORS.primaryPastel : COLORS.surfaceAlt }]}>
+        <View style={[styles.reminderIcon, { backgroundColor: medicamento.active ? colors.primaryPastel : colors.surfaceAlt }]}>
           <Text style={styles.reminderIconText}>💊</Text>
         </View>
         <View style={styles.reminderInfo}>
@@ -57,8 +60,8 @@ function MedicamentoCard({ medicamento, onToggle, onDelete }) {
           <Switch
             value={medicamento.active}
             onValueChange={() => onToggle(medicamento)}
-            trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-            thumbColor={medicamento.active ? COLORS.primary : COLORS.textMuted}
+            trackColor={{ false: colors.border, true: colors.primaryLight }}
+            thumbColor={medicamento.active ? colors.primary : colors.textMuted}
           />
           <TouchableOpacity onPress={() => onDelete(medicamento)} activeOpacity={0.7}>
             <Text style={styles.deleteIcon}>🗑️</Text>
@@ -70,6 +73,8 @@ function MedicamentoCard({ medicamento, onToggle, onDelete }) {
 }
 
 export default function RemindersScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet, hasPet } = usePetProfile();
   const { data: medicamentos, isLoading } = useMedicamentosByPet(pet?.id);
   const createMedicamento = useCreateMedicamento();
@@ -180,7 +185,7 @@ export default function RemindersScreen({ navigation }) {
   if (isLoading) {
     return (
       <SafeAreaView style={[styles.safe, styles.loadingContainer]} edges={['bottom']}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -292,8 +297,8 @@ export default function RemindersScreen({ navigation }) {
                 <Switch
                   value={continuo}
                   onValueChange={handleToggleContinuo}
-                  trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-                  thumbColor={continuo ? COLORS.primary : COLORS.textMuted}
+                  trackColor={{ false: colors.border, true: colors.primaryLight }}
+                  thumbColor={continuo ? colors.primary : colors.textMuted}
                 />
               </View>
 
@@ -339,31 +344,31 @@ export default function RemindersScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   loadingContainer: { alignItems: 'center', justifyContent: 'center' },
 
   summaryBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     padding: SPACING.base,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: colors.border,
     gap: SPACING.md,
   },
   summaryItem: { alignItems: 'center' },
-  summaryNum: { fontSize: FONT_SIZES.xl, fontWeight: FONT_WEIGHTS.extrabold, color: COLORS.primary },
-  summaryLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, fontWeight: FONT_WEIGHTS.medium },
-  summaryDivider: { width: 1, height: 32, backgroundColor: COLORS.border },
+  summaryNum: { fontSize: FONT_SIZES.xl, fontWeight: FONT_WEIGHTS.extrabold, color: colors.primary },
+  summaryLabel: { fontSize: FONT_SIZES.xs, color: colors.textMuted, fontWeight: FONT_WEIGHTS.medium },
+  summaryDivider: { width: 1, height: 32, backgroundColor: colors.border },
   addBtn: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.full,
     ...SHADOWS.sm,
   },
-  addBtnText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
+  addBtnText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
 
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -384,17 +389,17 @@ const styles = StyleSheet.create({
   reminderTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 2,
   },
-  inactiveText: { color: COLORS.textMuted },
+  inactiveText: { color: colors.textMuted },
   reminderDesc: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginBottom: SPACING.xs,
   },
   reminderMeta: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, flexWrap: 'wrap' },
-  reminderDate: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted },
+  reminderDate: { fontSize: FONT_SIZES.xs, color: colors.textMuted },
   reminderActions: { alignItems: 'center', gap: SPACING.sm },
   deleteIcon: { fontSize: 18 },
 
@@ -404,7 +409,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: BORDER_RADIUS['2xl'],
     borderTopRightRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.lg,
@@ -413,19 +418,19 @@ const styles = StyleSheet.create({
   },
   modalHandle: {
     width: 40, height: 4, borderRadius: 2,
-    backgroundColor: COLORS.border,
+    backgroundColor: colors.border,
     alignSelf: 'center', marginBottom: SPACING.lg,
   },
   fieldLabel: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     letterSpacing: 0.2,
   },
   errorText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: -SPACING.xs,
     marginBottom: SPACING.sm,
   },
@@ -439,13 +444,13 @@ const styles = StyleSheet.create({
   continuoLabel: {
     flex: 1,
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     fontWeight: FONT_WEIGHTS.medium,
   },
   modalTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.lg,
   },
   modalActions: { flexDirection: 'row', marginTop: SPACING.lg },
