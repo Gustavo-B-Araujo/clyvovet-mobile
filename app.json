@@ -29,7 +29,13 @@
           "resizeMode": "contain"
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "color": "#6C3FC5"
+        }
+      ]
     ],
     "experiments": {
       "reactCompiler": true

@@ -8,6 +8,9 @@ import { AuthProvider } from './context/AuthContext';
 import { PetSelectionProvider } from './context/PetSelectionContext';
 import AppNavigator from './navigation';
 import SplashScreen from './screens/SplashScreen';
+import { configureNotifications } from './services/notifications';
+
+configureNotifications();
 
 const queryClient = new QueryClient({
   defaultOptions: {

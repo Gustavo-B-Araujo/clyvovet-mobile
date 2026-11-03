@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import * as authApi from '../api/auth';
 import { saveSession, loadSession, clearSession } from '../storage';
+import { cancelAllReminders } from '../services/notifications';
 
 const AuthContext = createContext(null);
 
@@ -39,6 +40,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     await clearSession();
+    await cancelAllReminders().catch(() => {});
     setUser(null);
   }, []);
 

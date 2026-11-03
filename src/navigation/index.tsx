@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
+import { useMedicationReminderSync, useMedicationNotificationNavigation } from '../hooks/useMedicationReminders';
 
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
@@ -165,6 +166,9 @@ const screenOptions = {
 };
 
 function AppStack() {
+  useMedicationReminderSync();
+  useMedicationNotificationNavigation();
+
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       {/* Main Tabs */}
