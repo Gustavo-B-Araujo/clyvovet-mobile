@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider } from './context/AuthContext';
 import { PetSelectionProvider } from './context/PetSelectionContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import AppNavigator from './navigation';
 import SplashScreen from './screens/SplashScreen';
 import { configureNotifications } from './services/notifications';
@@ -18,23 +19,30 @@ const queryClient = new QueryClient({
   },
 });
 
+function ThemedStatusBar() {
+  const { isDark } = useTheme();
+  return <StatusBar style={isDark ? 'light' : 'dark'} />;
+}
+
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
 
   return (
     <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <PetSelectionProvider>
-            <StatusBar style="auto" />
-            {!splashDone ? (
-              <SplashScreen onFinish={() => setSplashDone(true)} />
-            ) : (
-              <AppNavigator />
-            )}
-          </PetSelectionProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <PetSelectionProvider>
+              <ThemedStatusBar />
+              {!splashDone ? (
+                <SplashScreen onFinish={() => setSplashDone(true)} />
+              ) : (
+                <AppNavigator />
+              )}
+            </PetSelectionProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

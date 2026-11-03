@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-export const COLORS = {
+export const LIGHT_COLORS = {
   // Primárias
   primary: '#6C3FC5',
   primaryLight: '#8B5CF6',
@@ -48,6 +48,62 @@ export const COLORS = {
   shadowColor: '#6C3FC5',
   shadowNeutral: '#000000',
 };
+
+export type ThemeColors = typeof LIGHT_COLORS;
+
+// Mesmas chaves da paleta clara. Variantes "Light"/"Pastel" viram tons escuros, usados como fundo de destaque.
+// `white` continua branco puro (texto sobre cor forte); fundos de superfície usam `surface`.
+export const DARK_COLORS: ThemeColors = {
+  // Primárias
+  primary: '#8B5CF6',
+  primaryLight: '#A78BFA',
+  primaryDark: '#6C3FC5',
+  primaryPastel: '#2E2350',
+
+  // Secundárias
+  secondary: '#A78BFA',
+  secondaryLight: '#7C5CC4',
+  secondaryPastel: '#241E3A',
+
+  // Accent
+  accent: '#F472B6',
+  accentLight: '#5B2745',
+  accentPastel: '#2E1A28',
+
+  // Neutros
+  white: '#FFFFFF',
+  background: '#121018',
+  surface: '#1C1A26',
+  surfaceAlt: '#262433',
+
+  // Textos
+  textPrimary: '#F3F2FF',
+  textSecondary: '#A8A5BD',
+  textMuted: '#7C7992',
+  textOnPrimary: '#FFFFFF',
+
+  // Status
+  success: '#34D399',
+  successLight: '#0F3D2E',
+  warning: '#FBBF24',
+  warningLight: '#3F2F0B',
+  danger: '#F87171',
+  dangerLight: '#451A1A',
+  info: '#60A5FA',
+  infoLight: '#172B4D',
+
+  // Bordas e divisores
+  border: '#34314A',
+  borderLight: '#262433',
+  divider: '#262433',
+
+  // Sombras
+  shadowColor: '#000000',
+  shadowNeutral: '#000000',
+};
+
+// Paleta clara usada pelas telas que ainda não foram migradas para o useTheme().
+export const COLORS = LIGHT_COLORS;
 
 export const FONT_SIZES = {
   xs: 11,

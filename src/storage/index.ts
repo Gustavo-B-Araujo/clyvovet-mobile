@@ -4,6 +4,7 @@ const KEYS = {
   AUTH_TOKEN: '@clyvo:auth_token',
   AUTH_USER: '@clyvo:auth_user',
   SELECTED_PET_ID: '@clyvo:selected_pet_id',
+  THEME_MODE: '@clyvo:theme_mode',
 };
 
 export async function saveSession(token, user) {
@@ -66,6 +67,25 @@ export async function saveSelectedPetId(petId) {
 export async function loadSelectedPetId() {
   try {
     return await AsyncStorage.getItem(KEYS.SELECTED_PET_ID);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Preferência de aparência escolhida pelo usuário: 'system', 'light' ou 'dark'.
+export async function saveThemeMode(mode) {
+  try {
+    await AsyncStorage.setItem(KEYS.THEME_MODE, mode);
+    return true;
+  } catch (e) {
+    console.error('[Storage] saveThemeMode error:', e);
+    return false;
+  }
+}
+
+export async function loadThemeMode() {
+  try {
+    return await AsyncStorage.getItem(KEYS.THEME_MODE);
   } catch (e) {
     return null;
   }
