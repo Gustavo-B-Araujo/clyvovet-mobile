@@ -30,6 +30,7 @@ import VetPrescricaoFormScreen from '../screens/VetPrescricaoFormScreen';
 import VetEditAccountScreen from '../screens/VetEditAccountScreen';
 import VetPrescricoesScreen from '../screens/VetPrescricoesScreen';
 import VetSettingsScreen from '../screens/VetSettingsScreen';
+import AboutScreen from '../screens/AboutScreen';
 
 const Stack = createNativeStackNavigator();
 const VetStackNav = createNativeStackNavigator();
@@ -214,6 +215,11 @@ function AppStack() {
         options={{ title: 'Alterar senha' }}
       />
       <Stack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: 'Sobre o App' }}
+      />
+      <Stack.Screen
         name="ConsultaForm"
         component={ConsultaFormScreen}
         options={{ title: 'Consulta' }}
@@ -316,6 +322,11 @@ function VetStack() {
         name="ChangePassword"
         component={ChangePasswordScreen}
         options={{ title: 'Alterar senha' }}
+      />
+      <VetStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: 'Sobre o App' }}
       />
     </VetStackNav.Navigator>
   );

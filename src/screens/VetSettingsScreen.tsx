@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
 import { showAlert } from '../utils/alert';
+import { APP_INFO } from '../config/appInfo';
 import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
 
@@ -42,14 +43,6 @@ export default function VetSettingsScreen({ navigation }) {
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Sair', style: 'destructive', onPress: () => logout() },
       ]
-    );
-  };
-
-  const handleAbout = () => {
-    showAlert(
-      '🐾 CLYVO VET',
-      'Versão 1.0.0\n\nCLYVO é uma plataforma de saúde animal contínua e inteligente, desenvolvida para transformar a jornada do pet em uma experiência preventiva, integrada e humanizada.\n\n© 2025 CLYVO VET',
-      [{ text: 'Fechar' }]
     );
   };
 
@@ -100,9 +93,9 @@ export default function VetSettingsScreen({ navigation }) {
           <Card>
             <SettingRow
               icon="ℹ️"
-              label="Sobre o CLYVO"
-              subtitle="Versão 1.0.0"
-              onPress={handleAbout}
+              label="Sobre o App"
+              subtitle={`Versão ${APP_INFO.version} · ${APP_INFO.commitHashShort}`}
+              onPress={() => navigation.navigate('About')}
             />
             <SettingRow
               icon="🔒"
