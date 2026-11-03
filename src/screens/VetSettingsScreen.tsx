@@ -11,6 +11,7 @@ import { showAlert } from '../utils/alert';
 import { APP_INFO } from '../config/appInfo';
 import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
+import ThemeModeSelector from '../components/ThemeModeSelector';
 
 function SettingRow({ icon, label, subtitle, onPress, isLast = false }) {
   const { colors } = useTheme();
@@ -90,6 +91,13 @@ export default function VetSettingsScreen({ navigation }) {
               onPress={handleLogout}
               isLast
             />
+          </Card>
+        </View>
+
+        <View style={styles.section}>
+          <SectionHeader title="Aparência" />
+          <Card>
+            <ThemeModeSelector />
           </Card>
         </View>
 
