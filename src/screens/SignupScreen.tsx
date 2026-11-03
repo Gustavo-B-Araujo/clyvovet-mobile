@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { showAlert } from '../utils/alert';
 import Input from '../components/Input';
@@ -21,6 +22,8 @@ function friendlyAuthError(error) {
 const INITIAL_FORM = { nome: '', email: '', telefone: '', cpf: '', password: '', confirmPassword: '' };
 
 export default function SignupScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { signup } = useAuth();
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
@@ -140,22 +143,22 @@ export default function SignupScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: SPACING.lg, flexGrow: 1, justifyContent: 'center' },
   title: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 4,
   },
-  subtitle: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, marginBottom: SPACING.lg },
+  subtitle: { fontSize: FONT_SIZES.sm, color: colors.textMuted, marginBottom: SPACING.lg },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: SPACING.xs,
     marginTop: SPACING.xl,
   },
-  footerText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted },
-  footerLink: { fontSize: FONT_SIZES.sm, color: COLORS.primary, fontWeight: FONT_WEIGHTS.bold },
+  footerText: { fontSize: FONT_SIZES.sm, color: colors.textMuted },
+  footerLink: { fontSize: FONT_SIZES.sm, color: colors.primary, fontWeight: FONT_WEIGHTS.bold },
 });

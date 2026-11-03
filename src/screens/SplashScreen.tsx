@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS } from '../constants/theme';
+// A splash usa sempre a paleta clara de propósito: ela precisa coincidir com a splash nativa (roxo fixo do app.json).
+import { LIGHT_COLORS as COLORS, FONT_SIZES, FONT_WEIGHTS } from '../constants/theme';
 
 export default function SplashScreen({ onFinish }) {
   const opacity = new Animated.Value(0);

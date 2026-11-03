@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { showAlert } from '../utils/alert';
 import Input from '../components/Input';
@@ -20,6 +21,8 @@ function friendlyAuthError(error) {
 }
 
 export default function LoginScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -97,21 +100,21 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: SPACING.lg, flexGrow: 1, justifyContent: 'center' },
   header: { alignItems: 'center', marginBottom: SPACING['3xl'] },
   logo: {
     fontSize: FONT_SIZES['3xl'],
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.primary,
+    color: colors.primary,
     letterSpacing: 2,
   },
-  tagline: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, marginTop: 4 },
+  tagline: { fontSize: FONT_SIZES.sm, color: colors.textMuted, marginTop: 4 },
   title: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.lg,
   },
   footer: {
@@ -120,6 +123,6 @@ const styles = StyleSheet.create({
     gap: SPACING.xs,
     marginTop: SPACING.xl,
   },
-  footerText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted },
-  footerLink: { fontSize: FONT_SIZES.sm, color: COLORS.primary, fontWeight: FONT_WEIGHTS.bold },
+  footerText: { fontSize: FONT_SIZES.sm, color: colors.textMuted },
+  footerLink: { fontSize: FONT_SIZES.sm, color: colors.primary, fontWeight: FONT_WEIGHTS.bold },
 });
