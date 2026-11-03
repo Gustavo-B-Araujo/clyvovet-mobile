@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, ScrollView, StyleSheet, Text,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { showAlert } from '../utils/alert';
 import { useCreateMedicamento } from '../hooks/useMedicamentos';
 import { addDays, todayIsoDate } from '../constants/schedule';
@@ -16,6 +17,8 @@ import SelectOption from '../components/SelectOption';
 const FREQUENCIES = ['Diário', 'Semanal', 'Mensal', 'Trimestral', 'Anual'];
 
 export default function VetPrescricaoFormScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { consulta } = route.params;
   const createMedicamento = useCreateMedicamento();
 
@@ -134,7 +137,7 @@ export default function VetPrescricaoFormScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   safe: { flex: 1 },
   content: { padding: SPACING.base },
 
@@ -142,12 +145,12 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: FONT_SIZES.xs,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
     marginBottom: 2,
   },
-  subtitle: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted },
+  subtitle: { fontSize: FONT_SIZES.sm, color: colors.textMuted },
 
   saveButton: { marginTop: SPACING.md },
 });

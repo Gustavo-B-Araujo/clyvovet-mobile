@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQueries } from '@tanstack/react-query';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useConsultasByVeterinario } from '../hooks/useConsultas';
 import { listMedicamentosByPet } from '../api/medicamentos';
@@ -12,6 +13,8 @@ import SectionHeader from '../components/SectionHeader';
 import EmptyState from '../components/EmptyState';
 
 export default function VetPrescricoesScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { user } = useAuth();
   const veterinarioId = user?.veterinarioId;
   const { data: consultas, isLoading: loadingConsultas } = useConsultasByVeterinario(veterinarioId);
@@ -73,7 +76,7 @@ export default function VetPrescricoesScreen() {
             </Text>
           </Card>
         ) : isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: SPACING.lg }} />
+          <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: SPACING.lg }} />
         ) : receitas.length === 0 ? (
           <EmptyState
             icon="💊"
@@ -107,15 +110,15 @@ export default function VetPrescricoesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 
   profileBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.base,
     marginBottom: SPACING.lg,
@@ -137,11 +140,11 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.white,
+    color: colors.white,
   },
   profileMeta: { fontSize: FONT_SIZES.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
 
-  warningText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, lineHeight: 20 },
+  warningText: { fontSize: FONT_SIZES.sm, color: colors.textMuted, lineHeight: 20 },
 
   receitaCard: { marginBottom: SPACING.sm },
   receitaRow: {
@@ -153,27 +156,27 @@ const styles = StyleSheet.create({
   receitaPet: {
     fontSize: FONT_SIZES.xs,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   receitaNome: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginTop: 2,
   },
-  receitaDosagem: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginTop: 2 },
-  receitaData: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted },
+  receitaDosagem: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, marginTop: 2 },
+  receitaData: { fontSize: FONT_SIZES.xs, color: colors.textMuted },
   receitaConsulta: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: SPACING.sm,
     fontStyle: 'italic',
   },
   receitaDesc: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginTop: SPACING.xs,
     lineHeight: 18,
   },

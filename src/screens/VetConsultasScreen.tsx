@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { useConsultasByVeterinario } from '../hooks/useConsultas';
 import { STATUS_CONSULTA_LABELS } from '../api/consultas';
@@ -13,6 +14,8 @@ import EmptyState from '../components/EmptyState';
 import Button from '../components/Button';
 
 export default function VetConsultasScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { user } = useAuth();
   const veterinarioId = user?.veterinarioId;
   const { data: consultas, isLoading } = useConsultasByVeterinario(veterinarioId);
@@ -54,7 +57,7 @@ export default function VetConsultasScreen({ navigation }) {
             </Text>
           </Card>
         ) : isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: SPACING.lg }} />
+          <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: SPACING.lg }} />
         ) : consultasOrdenadas.length === 0 ? (
           <EmptyState
             icon="🗓️"
@@ -99,15 +102,15 @@ export default function VetConsultasScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 
   profileBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.base,
     marginBottom: SPACING.lg,
@@ -129,13 +132,13 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.white,
+    color: colors.white,
   },
   profileMeta: { fontSize: FONT_SIZES.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
 
   newConsultaButton: { marginBottom: SPACING.lg },
 
-  warningText: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted, lineHeight: 20 },
+  warningText: { fontSize: FONT_SIZES.sm, color: colors.textMuted, lineHeight: 20 },
 
   consultaCard: { marginBottom: SPACING.sm },
   consultaTouchable: { padding: SPACING.base },
@@ -148,19 +151,19 @@ const styles = StyleSheet.create({
   consultaPet: {
     fontSize: FONT_SIZES.xs,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   consultaTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
-  consultaDate: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, marginTop: 2 },
+  consultaDate: { fontSize: FONT_SIZES.xs, color: colors.textMuted, marginTop: 2 },
   consultaDesc: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     marginTop: SPACING.sm,
     lineHeight: 18,
   },
@@ -169,11 +172,11 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.base,
     borderTopWidth: 1,
-    borderTopColor: COLORS.divider,
+    borderTopColor: colors.divider,
   },
   addReceitaText: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.primary,
+    color: colors.primary,
   },
 });

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View, ScrollView, StyleSheet,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, SPACING } from '../constants/theme';
+import { SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useVeterinario, useUpdateVeterinario } from '../hooks/useVeterinarios';
 import { showAlert } from '../utils/alert';
 import Input from '../components/Input';
@@ -15,6 +16,8 @@ import Card from '../components/Card';
 const INITIAL_FORM = { nome: '', telefone: '' };
 
 export default function VetEditAccountScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { veterinario, veterinarioId } = useVeterinario();
   const updateVeterinario = useUpdateVeterinario();
 
@@ -112,8 +115,8 @@ export default function VetEditAccountScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 

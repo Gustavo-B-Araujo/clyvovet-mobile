@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { STATUS_CONSULTA_LABELS } from '../api/consultas';
 import { formatDate } from '../services/healthScore';
 import { showAlert } from '../utils/alert';
@@ -19,6 +20,8 @@ const STATUS_BADGE = {
 };
 
 function InfoRow({ label, value }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   if (!value) return null;
   return (
     <View style={styles.infoRow}>
@@ -29,6 +32,8 @@ function InfoRow({ label, value }) {
 }
 
 export default function VetConsultaDetailScreen({ route }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [consulta, setConsulta] = useState(route.params.consulta);
   const updateConsulta = useUpdateConsulta();
   const hora = consulta.dataHora ? consulta.dataHora.slice(11, 16) : '';
@@ -94,15 +99,15 @@ export default function VetConsultaDetailScreen({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: SPACING.base },
 
   header: { marginBottom: SPACING.lg },
   petName: {
     fontSize: FONT_SIZES.xs,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.primary,
+    color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.3,
     marginBottom: 4,
@@ -115,22 +120,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
 
   infoRow: {
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
   infoLabel: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginBottom: 2,
   },
   infoValue: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     lineHeight: 20,
   },
 
