@@ -1,36 +1,41 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
-const ALERT_CONFIG = {
+// Em tema escuro o fundo é um tom escuro, então o texto usa a cor de texto principal.
+const createAlertConfig = (colors: ThemeColors, isDark: boolean) => ({
   warning: {
-    bg: COLORS.warningLight,
-    border: COLORS.warning,
-    textColor: '#92400E',
+    bg: colors.warningLight,
+    border: colors.warning,
+    textColor: isDark ? colors.textPrimary : '#92400E',
     icon: '⚠️',
   },
   danger: {
-    bg: COLORS.dangerLight,
-    border: COLORS.danger,
-    textColor: '#991B1B',
+    bg: colors.dangerLight,
+    border: colors.danger,
+    textColor: isDark ? colors.textPrimary : '#991B1B',
     icon: '🚨',
   },
   info: {
-    bg: COLORS.infoLight,
-    border: COLORS.info,
-    textColor: '#1E3A5F',
+    bg: colors.infoLight,
+    border: colors.info,
+    textColor: isDark ? colors.textPrimary : '#1E3A5F',
     icon: 'ℹ️',
   },
   success: {
-    bg: COLORS.successLight,
-    border: COLORS.success,
-    textColor: '#064E3B',
+    bg: colors.successLight,
+    border: colors.success,
+    textColor: isDark ? colors.textPrimary : '#064E3B',
     icon: '✅',
   },
-};
+});
 
 export default function AlertBanner({ type = 'info', title, description, action, onAction, style }) {
-  const config = ALERT_CONFIG[type] || ALERT_CONFIG.info;
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const alertConfig = createAlertConfig(colors, isDark);
+  const config = alertConfig[type] || alertConfig.info;
 
   return (
     <View style={[
@@ -59,7 +64,7 @@ export default function AlertBanner({ type = 'info', title, description, action,
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     borderRadius: BORDER_RADIUS.md,
     borderLeftWidth: 4,

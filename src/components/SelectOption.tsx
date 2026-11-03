@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SelectOption({ label, options = [], value, onChange, style }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -29,14 +32,14 @@ export default function SelectOption({ label, options = [], value, onChange, sty
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     marginBottom: SPACING.base,
   },
   label: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     letterSpacing: 0.2,
   },
@@ -50,20 +53,20 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     borderRadius: BORDER_RADIUS.full,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   selectedOption: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryPastel,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPastel,
   },
   optionText: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.medium,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
   },
   selectedText: {
-    color: COLORS.primary,
+    color: colors.primary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import { COLORS, BORDER_RADIUS, SPACING, SHADOWS } from '../constants/theme';
+import { BORDER_RADIUS, SPACING, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Card({ children, style, variant = 'default', noPadding = false }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={[
       styles.card,
@@ -17,9 +20,9 @@ export default function Card({ children, style, variant = 'default', noPadding =
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   card: {
-    backgroundColor: COLORS.surface,
+    backgroundColor: colors.surface,
     borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.base,
     ...SHADOWS.md,
@@ -33,10 +36,10 @@ const styles = StyleSheet.create({
       default: { shadowOpacity: 0, elevation: 0 },
     }),
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
   },
   primary: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
   },
   noPadding: {
     padding: 0,

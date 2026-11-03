@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Button({
   title,
@@ -13,6 +14,8 @@ export default function Button({
   style,
   textStyle,
 }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const isDisabled = disabled || loading;
 
   return (
@@ -30,7 +33,7 @@ export default function Button({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' || variant === 'danger' ? COLORS.white : COLORS.primary}
+          color={variant === 'primary' || variant === 'danger' ? colors.white : colors.primary}
           size="small"
         />
       ) : (
@@ -50,7 +53,7 @@ export default function Button({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   base: {
     borderRadius: BORDER_RADIUS.lg,
     alignItems: 'center',
@@ -68,28 +71,28 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     ...SHADOWS.md,
   },
   secondary: {
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: COLORS.primary,
+    borderColor: colors.primary,
   },
   ghost: {
     backgroundColor: 'transparent',
   },
   danger: {
-    backgroundColor: COLORS.danger,
+    backgroundColor: colors.danger,
     ...SHADOWS.danger,
   },
   dangerOutline: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: COLORS.danger,
+    borderColor: colors.danger,
   },
 
   size_sm: {
@@ -120,12 +123,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
-  text_primary: { color: COLORS.white },
-  text_secondary: { color: COLORS.primary },
-  text_outline: { color: COLORS.primary },
-  text_ghost: { color: COLORS.primary },
-  text_danger: { color: COLORS.white },
-  text_dangerOutline: { color: COLORS.danger },
+  text_primary: { color: colors.white },
+  text_secondary: { color: colors.primary },
+  text_outline: { color: colors.primary },
+  text_ghost: { color: colors.primary },
+  text_danger: { color: colors.white },
+  text_dangerOutline: { color: colors.danger },
 
   textSize_sm: { fontSize: FONT_SIZES.sm },
   textSize_md: { fontSize: FONT_SIZES.base },

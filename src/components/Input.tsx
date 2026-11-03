@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Input({
   label,
@@ -20,6 +21,8 @@ export default function Input({
   style,
   inputStyle,
 }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [focused, setFocused] = useState(false);
 
   return (
@@ -44,7 +47,7 @@ export default function Input({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={COLORS.textMuted}
+          placeholderTextColor={colors.textMuted}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           multiline={multiline}
@@ -62,24 +65,24 @@ export default function Input({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     marginBottom: SPACING.base,
   },
   label: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     letterSpacing: 0.2,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background,
     borderRadius: BORDER_RADIUS.md,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
     paddingHorizontal: SPACING.md,
     minHeight: 50,
   },
@@ -90,20 +93,20 @@ const styles = StyleSheet.create({
     minHeight: 100,
   },
   focused: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.white,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
   },
   errorBorder: {
-    borderColor: COLORS.danger,
+    borderColor: colors.danger,
   },
   disabled: {
     opacity: 0.6,
-    backgroundColor: COLORS.surfaceAlt,
+    backgroundColor: colors.surfaceAlt,
   },
   input: {
     flex: 1,
     fontSize: FONT_SIZES.base,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: FONT_WEIGHTS.regular,
   },
   multilineInput: {
@@ -111,22 +114,22 @@ const styles = StyleSheet.create({
   },
   prefix: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginRight: SPACING.xs,
   },
   suffix: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginLeft: SPACING.xs,
   },
   errorText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: SPACING.xs,
   },
   helperText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: SPACING.xs,
   },
 });

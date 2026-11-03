@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import Button from './Button';
 
 function parseIsoDate(iso) {
@@ -33,6 +34,8 @@ export default function DatePickerField({
   maximumDate,
   minimumDate,
 }) {
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [show, setShow] = useState(false);
   const [draft, setDraft] = useState(null);
 
@@ -47,7 +50,7 @@ export default function DatePickerField({
             onChange={(e) => onChange(e.target.value)}
             max={maximumDate ? toIsoDate(maximumDate) : undefined}
             min={minimumDate ? toIsoDate(minimumDate) : undefined}
-            style={webInputStyle}
+            style={createWebInputStyle(colors)}
           />
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
@@ -113,6 +116,7 @@ export default function DatePickerField({
                 value={draft || new Date()}
                 mode="date"
                 display="spinner"
+                themeVariant={isDark ? 'dark' : 'light'}
                 maximumDate={maximumDate}
                 minimumDate={minimumDate}
                 onChange={handleChange}
@@ -127,58 +131,58 @@ export default function DatePickerField({
   );
 }
 
-const webInputStyle = {
+const createWebInputStyle = (colors: ThemeColors) => ({
   border: 'none',
   outline: 'none',
   background: 'transparent',
   fontSize: FONT_SIZES.base,
-  color: COLORS.textPrimary,
+  color: colors.textPrimary,
   fontFamily: 'inherit',
   width: '100%',
   padding: 0,
-};
+});
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     marginBottom: SPACING.base,
   },
   label: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     letterSpacing: 0.2,
   },
   wrapper: {
     justifyContent: 'center',
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background,
     borderRadius: BORDER_RADIUS.md,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
+    borderColor: colors.border,
     paddingHorizontal: SPACING.md,
     minHeight: 50,
   },
   errorBorder: {
-    borderColor: COLORS.danger,
+    borderColor: colors.danger,
   },
   value: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     fontWeight: FONT_WEIGHTS.regular,
   },
   placeholder: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.regular,
   },
   errorText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: SPACING.xs,
   },
   helperText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: SPACING.xs,
   },
   modalOverlay: {
@@ -187,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   modalSheet: {
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
     padding: SPACING.base,

@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SectionHeader({ title, subtitle, action, onAction }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.container}>
       <View style={styles.left}>
@@ -18,7 +21,7 @@ export default function SectionHeader({ title, subtitle, action, onAction }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -31,17 +34,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: 2,
   },
   action: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.primary,
+    color: colors.primary,
   },
 });

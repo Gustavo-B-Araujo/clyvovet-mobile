@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 
 export default function DateStrip({ days, selected, onSelect }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.stripScroll}>
       <View style={styles.stripRow}>
@@ -26,7 +29,7 @@ export default function DateStrip({ days, selected, onSelect }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   stripScroll: { marginBottom: SPACING.base },
   stripRow: { flexDirection: 'row', gap: SPACING.sm, paddingRight: SPACING.base },
   dayChip: {
@@ -35,16 +38,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.lg,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     minWidth: 56,
   },
   dayChipActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
-  dayWeekday: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, fontWeight: FONT_WEIGHTS.medium },
-  dayNum: { fontSize: FONT_SIZES.lg, color: COLORS.textPrimary, fontWeight: FONT_WEIGHTS.extrabold },
-  dayMonth: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, fontWeight: FONT_WEIGHTS.medium },
-  dayTextActive: { color: COLORS.white },
+  dayWeekday: { fontSize: FONT_SIZES.xs, color: colors.textMuted, fontWeight: FONT_WEIGHTS.medium },
+  dayNum: { fontSize: FONT_SIZES.lg, color: colors.textPrimary, fontWeight: FONT_WEIGHTS.extrabold },
+  dayMonth: { fontSize: FONT_SIZES.xs, color: colors.textMuted, fontWeight: FONT_WEIGHTS.medium },
+  dayTextActive: { color: colors.white },
 });

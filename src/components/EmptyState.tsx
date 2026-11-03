@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import Button from './Button';
 
 export default function EmptyState({ icon = '🐾', title, description, action, onAction }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
@@ -22,7 +25,7 @@ export default function EmptyState({ icon = '🐾', title, description, action, 
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -36,13 +39,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: SPACING.sm,
   },
   description: {
     fontSize: FONT_SIZES.base,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: SPACING.xl,
