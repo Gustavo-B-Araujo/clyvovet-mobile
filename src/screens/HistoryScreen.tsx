@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity, Modal, Pressable, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { useConsultasByPet } from '../hooks/useConsultas';
 import { useExamesByConsulta } from '../hooks/useExames';
@@ -15,19 +16,23 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import EmptyState from '../components/EmptyState';
 
-const TYPE_CONFIG = {
-  consulta: { icon: '🩺', color: COLORS.primary, bg: COLORS.primaryPastel },
-  exame: { icon: '🔬', color: COLORS.info, bg: COLORS.infoLight },
-  cirurgia: { icon: '⚕️', color: COLORS.danger, bg: COLORS.dangerLight },
-  retorno: { icon: '🔄', color: COLORS.success, bg: COLORS.successLight },
-  emergencia: { icon: '🚨', color: '#B45309', bg: COLORS.warningLight },
-};
+// No escuro, o texto laranja fixo (ilegível sobre fundo escuro) usa a cor de aviso do tema.
+const createTypeConfig = (colors: ThemeColors, isDark: boolean) => ({
+  consulta: { icon: '🩺', color: colors.primary, bg: colors.primaryPastel },
+  exame: { icon: '🔬', color: colors.info, bg: colors.infoLight },
+  cirurgia: { icon: '⚕️', color: colors.danger, bg: colors.dangerLight },
+  retorno: { icon: '🔄', color: colors.success, bg: colors.successLight },
+  emergencia: { icon: '🚨', color: isDark ? colors.warning : '#B45309', bg: colors.warningLight },
+});
 
 function HistoryModal({ event, visible, onClose, onEdit }) {
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { data: exames, isLoading: loadingExames } = useExamesByConsulta(event?.id, { enabled: visible });
 
   if (!event) return null;
-  const cfg = TYPE_CONFIG[event.type] || TYPE_CONFIG.consulta;
+  const typeConfig = createTypeConfig(colors, isDark);
+  const cfg = typeConfig[event.type] || typeConfig.consulta;
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -78,7 +83,7 @@ function HistoryModal({ event, visible, onClose, onEdit }) {
             <View style={styles.modalSection}>
               <Text style={styles.modalSectionTitle}>🔬 Exames vinculados</Text>
               {loadingExames ? (
-                <ActivityIndicator color={COLORS.primary} style={{ marginTop: SPACING.xs }} />
+                <ActivityIndicator color={colors.primary} style={{ marginTop: SPACING.xs }} />
               ) : exames && exames.length > 0 ? (
                 exames.map((e) => (
                   <View key={e.id} style={styles.listItem}>
@@ -105,6 +110,9 @@ function HistoryModal({ event, visible, onClose, onEdit }) {
 }
 
 export default function HistoryScreen({ navigation }) {
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const typeConfig = createTypeConfig(colors, isDark);
   const { pet, hasPet } = usePetProfile();
   const { data: consultas, isLoading } = useConsultasByPet(pet?.id);
   const [selected, setSelected] = useState(null);
@@ -127,7 +135,7 @@ export default function HistoryScreen({ navigation }) {
   if (isLoading) {
     return (
       <SafeAreaView style={[styles.safe, styles.loadingContainer]} edges={['bottom']}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -198,7 +206,7 @@ export default function HistoryScreen({ navigation }) {
               </View>
 
               {grouped[year].map((event, idx) => {
-                const cfg = TYPE_CONFIG[event.type] || TYPE_CONFIG.consulta;
+                const cfg = typeConfig[event.type] || typeConfig.consulta;
                 const isLast = idx === grouped[year].length - 1;
                 return (
                   <TouchableOpacity
@@ -253,24 +261,24 @@ export default function HistoryScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   loadingContainer: { alignItems: 'center', justifyContent: 'center' },
 
   statsBar: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.base,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: colors.border,
     gap: SPACING.md,
     flexWrap: 'wrap',
   },
   statItem: { alignItems: 'center', gap: 2 },
   statIcon: { fontSize: 18 },
-  statNum: { fontSize: FONT_SIZES.base, fontWeight: FONT_WEIGHTS.extrabold, color: COLORS.primary },
-  statLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, textTransform: 'capitalize' },
+  statNum: { fontSize: FONT_SIZES.base, fontWeight: FONT_WEIGHTS.extrabold, color: colors.primary },
+  statLabel: { fontSize: FONT_SIZES.xs, color: colors.textMuted, textTransform: 'capitalize' },
 
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -282,11 +290,11 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     gap: SPACING.sm,
   },
-  yearLine: { flex: 1, height: 1, backgroundColor: COLORS.border },
+  yearLine: { flex: 1, height: 1, backgroundColor: colors.border },
   yearText: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     paddingHorizontal: SPACING.xs,
     letterSpacing: 1,
   },
@@ -327,23 +335,23 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
   eventDate: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: 2,
   },
   eventVet: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.primary,
+    color: colors.primary,
     marginTop: 1,
   },
   eventRight: { alignItems: 'flex-end', gap: 4 },
-  eventChevron: { fontSize: 20, color: COLORS.textMuted },
+  eventChevron: { fontSize: 20, color: colors.textMuted },
   eventDesc: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 18,
   },
 
@@ -353,7 +361,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: BORDER_RADIUS['2xl'],
     borderTopRightRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.lg,
@@ -364,7 +372,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: COLORS.border,
+    backgroundColor: colors.border,
     alignSelf: 'center',
     marginBottom: SPACING.lg,
   },
@@ -380,7 +388,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.sm,
   },
   modalMeta: {
@@ -390,29 +398,29 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
     flexWrap: 'wrap',
   },
-  modalDate: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted },
+  modalDate: { fontSize: FONT_SIZES.sm, color: colors.textMuted },
   modalSection: {
     marginBottom: SPACING.md,
     paddingBottom: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
   modalSectionTitle: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginBottom: SPACING.xs,
   },
-  modalSectionText: { fontSize: FONT_SIZES.sm, color: COLORS.textPrimary, lineHeight: 22 },
+  modalSectionText: { fontSize: FONT_SIZES.sm, color: colors.textPrimary, lineHeight: 22 },
   listItem: { flexDirection: 'row', gap: SPACING.xs, marginTop: 4 },
-  listDot: { color: COLORS.primary, fontWeight: FONT_WEIGHTS.bold },
-  listText: { fontSize: FONT_SIZES.sm, color: COLORS.textPrimary, flex: 1 },
+  listDot: { color: colors.primary, fontWeight: FONT_WEIGHTS.bold },
+  listText: { fontSize: FONT_SIZES.sm, color: colors.textPrimary, flex: 1 },
   modalClose: {
     marginTop: SPACING.lg,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.base,
     alignItems: 'center',
   },
-  modalCloseText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
+  modalCloseText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
 });

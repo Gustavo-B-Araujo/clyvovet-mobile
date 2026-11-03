@@ -4,7 +4,8 @@ import {
   TouchableOpacity, KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { showAlert } from '../utils/alert';
 import { useCreateConsulta, useUpdateConsulta, useDeleteConsulta, useConsultasByVeterinario } from '../hooks/useConsultas';
 import { useVeterinarios } from '../hooks/useVeterinarios';
@@ -20,6 +21,8 @@ const TIPO_OPTIONS = Object.values(TIPO_CONSULTA_LABELS);
 const SLOTS = generateDaySlots();
 
 function SlotGrid({ dateIso, selected, bookedTimes, onSelect }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const isDisabled = (time) => bookedTimes.includes(time) || isSlotInPast(dateIso, time);
 
   if (SLOTS.every(isDisabled)) {
@@ -58,6 +61,8 @@ function SlotGrid({ dateIso, selected, bookedTimes, onSelect }) {
 }
 
 export default function ConsultaFormScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { petId, consulta } = route.params;
   const isEditing = !!consulta;
 
@@ -189,7 +194,7 @@ export default function ConsultaFormScreen({ navigation, route }) {
             />
 
             {loadingVets ? (
-              <ActivityIndicator color={COLORS.primary} style={{ marginVertical: SPACING.sm }} />
+              <ActivityIndicator color={colors.primary} style={{ marginVertical: SPACING.sm }} />
             ) : vetOptions.length === 0 ? (
               <Text style={styles.noVetsText}>
                 Nenhum veterinário cadastrado no sistema. Cadastre um veterinário antes de registrar a consulta.
@@ -264,25 +269,25 @@ export default function ConsultaFormScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   safe: { flex: 1 },
   content: { padding: SPACING.base },
   actions: { marginTop: SPACING.md },
   noVetsText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.danger,
+    color: colors.danger,
     marginBottom: SPACING.base,
   },
   errorText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: -SPACING.xs,
     marginBottom: SPACING.sm,
   },
   sectionLabel: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     marginTop: SPACING.xs,
     letterSpacing: 0.2,
@@ -300,23 +305,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     borderRadius: BORDER_RADIUS.full,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   slotChipActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryPastel,
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryPastel,
   },
   slotChipDisabled: {
-    backgroundColor: COLORS.surfaceAlt,
-    borderColor: COLORS.surfaceAlt,
+    backgroundColor: colors.surfaceAlt,
+    borderColor: colors.surfaceAlt,
   },
-  slotText: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, fontWeight: FONT_WEIGHTS.medium },
-  slotTextActive: { color: COLORS.primary, fontWeight: FONT_WEIGHTS.bold },
-  slotTextDisabled: { color: COLORS.textMuted, textDecorationLine: 'line-through' },
+  slotText: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, fontWeight: FONT_WEIGHTS.medium },
+  slotTextActive: { color: colors.primary, fontWeight: FONT_WEIGHTS.bold },
+  slotTextDisabled: { color: colors.textMuted, textDecorationLine: 'line-through' },
   noSlotsText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginBottom: SPACING.base,
     fontStyle: 'italic',
   },

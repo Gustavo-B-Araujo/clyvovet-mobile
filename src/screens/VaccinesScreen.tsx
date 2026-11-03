@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity, Modal, Pressable, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { useVacinasByPet } from '../hooks/useVacinas';
 import { formatDate } from '../services/healthScore';
@@ -18,6 +19,8 @@ const FILTERS = ['Todas', 'Em dia', 'Atrasadas', 'Próximas'];
 const STATUS_MAP = { 'Em dia': 'done', 'Atrasadas': 'overdue', 'Próximas': 'upcoming' };
 
 function VaccineCard({ vaccine, onPress }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const icons = { done: '✅', overdue: '⚠️', upcoming: '📅' };
 
   return (
@@ -25,8 +28,8 @@ function VaccineCard({ vaccine, onPress }) {
       <Card style={styles.vaccineCard}>
         <View style={styles.vaccineRow}>
           <View style={[styles.vaccineIcon, {
-            backgroundColor: vaccine.status === 'done' ? COLORS.successLight :
-              vaccine.status === 'overdue' ? COLORS.dangerLight : COLORS.infoLight
+            backgroundColor: vaccine.status === 'done' ? colors.successLight :
+              vaccine.status === 'overdue' ? colors.dangerLight : colors.infoLight
           }]}>
             <Text style={styles.vaccineIconText}>{icons[vaccine.status]}</Text>
           </View>
@@ -39,7 +42,7 @@ function VaccineCard({ vaccine, onPress }) {
                 </Text>
               )}
               <Text style={[styles.vaccineDate,
-                vaccine.status === 'overdue' && { color: COLORS.danger, fontWeight: FONT_WEIGHTS.bold }
+                vaccine.status === 'overdue' && { color: colors.danger, fontWeight: FONT_WEIGHTS.bold }
               ]}>
                 {vaccine.status === 'done' ? 'Próxima: ' :
                   vaccine.status === 'overdue' ? 'Venceu: ' : 'Prevista: '}
@@ -58,6 +61,8 @@ function VaccineCard({ vaccine, onPress }) {
 }
 
 function VaccineModal({ vaccine, visible, onClose, onEdit }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   if (!vaccine) return null;
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -78,7 +83,7 @@ function VaccineModal({ vaccine, visible, onClose, onEdit }) {
             <View style={styles.modalRow}>
               <Text style={styles.modalLabel}>🔁 Próxima dose</Text>
               <Text style={[styles.modalValue,
-                vaccine.status === 'overdue' && { color: COLORS.danger }
+                vaccine.status === 'overdue' && { color: colors.danger }
               ]}>
                 {formatDate(vaccine.nextDate)}
               </Text>
@@ -120,6 +125,8 @@ function VaccineModal({ vaccine, visible, onClose, onEdit }) {
 }
 
 export default function VaccinesScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet, hasPet } = usePetProfile();
   const { data: vaccines, isLoading } = useVacinasByPet(pet?.id);
   const [filter, setFilter] = useState('Todas');
@@ -143,7 +150,7 @@ export default function VaccinesScreen({ navigation }) {
   if (isLoading) {
     return (
       <SafeAreaView style={[styles.safe, styles.loadingContainer]} edges={['bottom']}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </SafeAreaView>
     );
   }
@@ -164,17 +171,17 @@ export default function VaccinesScreen({ navigation }) {
       {/* Summary bar */}
       <View style={styles.summaryBar}>
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryNum, { color: COLORS.success }]}>{counts.done}</Text>
+          <Text style={[styles.summaryNum, { color: colors.success }]}>{counts.done}</Text>
           <Text style={styles.summaryLabel}>Em dia</Text>
         </View>
         <View style={styles.summaryDivider} />
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryNum, { color: COLORS.danger }]}>{counts.overdue}</Text>
+          <Text style={[styles.summaryNum, { color: colors.danger }]}>{counts.overdue}</Text>
           <Text style={styles.summaryLabel}>Atrasadas</Text>
         </View>
         <View style={styles.summaryDivider} />
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryNum, { color: COLORS.info }]}>{counts.upcoming}</Text>
+          <Text style={[styles.summaryNum, { color: colors.info }]}>{counts.upcoming}</Text>
           <Text style={styles.summaryLabel}>Próximas</Text>
         </View>
       </View>
@@ -246,28 +253,28 @@ export default function VaccinesScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   loadingContainer: { alignItems: 'center', justifyContent: 'center' },
 
   summaryBar: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     padding: SPACING.base,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: colors.border,
     ...SHADOWS.sm,
   },
   summaryItem: { flex: 1, alignItems: 'center' },
   summaryNum: { fontSize: FONT_SIZES['2xl'], fontWeight: FONT_WEIGHTS.extrabold },
-  summaryLabel: { fontSize: FONT_SIZES.xs, color: COLORS.textMuted, fontWeight: FONT_WEIGHTS.medium },
-  summaryDivider: { width: 1, backgroundColor: COLORS.border },
+  summaryLabel: { fontSize: FONT_SIZES.xs, color: colors.textMuted, fontWeight: FONT_WEIGHTS.medium },
+  summaryDivider: { width: 1, backgroundColor: colors.border },
 
   filterScroll: {
     maxHeight: 56,
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: colors.border,
   },
   filterRow: {
     flexDirection: 'row',
@@ -281,19 +288,19 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.xs,
     borderRadius: BORDER_RADIUS.full,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.white,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   filterActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
   },
   filterText: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.medium,
   },
-  filterActiveText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold },
+  filterActiveText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold },
 
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -312,34 +319,34 @@ const styles = StyleSheet.create({
   vaccineName: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   vaccineDates: { gap: 2 },
   vaccineDate: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
   },
   vaccineBadge: { alignItems: 'flex-end', gap: 4 },
   vaccineChevron: {
     fontSize: 20,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
   },
 
   empty: { alignItems: 'center', paddingVertical: SPACING['4xl'] },
   emptyIcon: { fontSize: 40, marginBottom: SPACING.sm },
-  emptyText: { fontSize: FONT_SIZES.base, color: COLORS.textMuted },
+  emptyText: { fontSize: FONT_SIZES.base, color: colors.textMuted },
 
   infoCard: { marginTop: SPACING.sm },
   infoTitle: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
   },
   infoText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     lineHeight: 18,
   },
 
@@ -350,7 +357,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: BORDER_RADIUS['2xl'],
     borderTopRightRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.lg,
@@ -360,7 +367,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: COLORS.border,
+    backgroundColor: colors.border,
     alignSelf: 'center',
     marginBottom: SPACING.lg,
   },
@@ -373,7 +380,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     flex: 1,
   },
   modalBody: { gap: SPACING.sm },
@@ -382,25 +389,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
-  modalLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textMuted },
-  modalValue: { fontSize: FONT_SIZES.sm, fontWeight: FONT_WEIGHTS.semibold, color: COLORS.textPrimary },
+  modalLabel: { fontSize: FONT_SIZES.sm, color: colors.textMuted },
+  modalValue: { fontSize: FONT_SIZES.sm, fontWeight: FONT_WEIGHTS.semibold, color: colors.textPrimary },
   modalNotes: { paddingTop: SPACING.sm },
-  modalNotesText: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginTop: 4, lineHeight: 20 },
+  modalNotesText: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, marginTop: 4, lineHeight: 20 },
   modalAlert: {
-    backgroundColor: COLORS.dangerLight,
+    backgroundColor: colors.dangerLight,
     borderRadius: BORDER_RADIUS.md,
     padding: SPACING.md,
     marginTop: SPACING.sm,
   },
-  modalAlertText: { fontSize: FONT_SIZES.sm, color: COLORS.danger, fontWeight: FONT_WEIGHTS.medium },
+  modalAlertText: { fontSize: FONT_SIZES.sm, color: colors.danger, fontWeight: FONT_WEIGHTS.medium },
   modalClose: {
     marginTop: SPACING.lg,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.base,
     alignItems: 'center',
   },
-  modalCloseText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
+  modalCloseText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
 });

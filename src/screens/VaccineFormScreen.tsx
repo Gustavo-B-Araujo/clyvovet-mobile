@@ -4,7 +4,8 @@ import {
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { useCreateVacina, useUpdateVacina, useDeleteVacina } from '../hooks/useVacinas';
 import { showAlert } from '../utils/alert';
 import { addDays, generateDayRange, todayIsoDate } from '../constants/schedule';
@@ -14,6 +15,8 @@ import Card from '../components/Card';
 import DateStrip from '../components/DateStrip';
 
 export default function VaccineFormScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { petId, vaccine } = route.params;
   const isEditing = !!vaccine;
 
@@ -138,8 +141,8 @@ export default function VaccineFormScreen({ navigation, route }) {
               <Switch
                 value={semReforco}
                 onValueChange={handleToggleSemReforco}
-                trackColor={{ false: COLORS.border, true: COLORS.primaryLight }}
-                thumbColor={semReforco ? COLORS.primary : COLORS.textMuted}
+                trackColor={{ false: colors.border, true: colors.primaryLight }}
+                thumbColor={semReforco ? colors.primary : colors.textMuted}
               />
             </View>
 
@@ -200,20 +203,20 @@ export default function VaccineFormScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
   safe: { flex: 1 },
   content: { padding: SPACING.base },
   actions: { marginTop: SPACING.md },
   fieldLabel: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     marginBottom: SPACING.xs,
     letterSpacing: 0.2,
   },
   errorText: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: -SPACING.xs,
     marginBottom: SPACING.sm,
   },
@@ -227,7 +230,7 @@ const styles = StyleSheet.create({
   semReforcoLabel: {
     flex: 1,
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     fontWeight: FONT_WEIGHTS.medium,
   },
 });

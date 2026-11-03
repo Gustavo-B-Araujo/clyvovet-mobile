@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { APP_INFO } from '../config/appInfo';
 import Card from '../components/Card';
 
 function InfoRow({ label, value, selectable = false, isLast = false }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={[styles.infoRow, isLast && styles.lastRow]}>
       <Text style={styles.infoLabel}>{label}</Text>
@@ -15,6 +18,8 @@ function InfoRow({ label, value, selectable = false, isLast = false }) {
 }
 
 export default function AboutScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -42,15 +47,15 @@ export default function AboutScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   content: { padding: SPACING.base, paddingBottom: SPACING['2xl'] },
   header: { alignItems: 'center', marginVertical: SPACING.xl },
   logo: {
     width: 88,
     height: 88,
     borderRadius: BORDER_RADIUS['2xl'],
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: SPACING.md,
@@ -59,31 +64,31 @@ const styles = StyleSheet.create({
   name: {
     fontSize: FONT_SIZES['2xl'],
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
-  version: { fontSize: FONT_SIZES.base, color: COLORS.textSecondary, marginTop: SPACING.xs },
+  version: { fontSize: FONT_SIZES.base, color: colors.textSecondary, marginTop: SPACING.xs },
   infoRow: {
     paddingVertical: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
   },
   lastRow: { borderBottomWidth: 0 },
-  infoLabel: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, marginBottom: SPACING.xs },
+  infoLabel: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, marginBottom: SPACING.xs },
   infoValue: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
   description: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textSecondary,
+    color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     marginTop: SPACING.xl,
   },
   footer: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     textAlign: 'center',
     marginTop: SPACING.base,
   },

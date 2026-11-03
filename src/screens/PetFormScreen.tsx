@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { ESPECIE_OPTIONS, SEXO_OPTIONS } from '../api/pets';
 import { showAlert } from '../utils/alert';
@@ -24,6 +25,8 @@ const INITIAL_FORM = {
 };
 
 export default function PetFormScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet, createPet, updatePet, removePet } = usePetProfile();
   const forceCreate = !!route?.params?.create;
 
@@ -206,8 +209,8 @@ export default function PetFormScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
   previewName: {
     fontSize: FONT_SIZES.xl,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.white,
+    color: colors.white,
     marginBottom: 4,
   },
   previewMeta: {
@@ -239,7 +242,7 @@ const styles = StyleSheet.create({
 
   fieldError: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.danger,
+    color: colors.danger,
     marginTop: -SPACING.sm,
     marginBottom: SPACING.sm,
   },

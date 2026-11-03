@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { EMERGENCY_SIGNS } from '../constants/appContent';
 import { showAlert } from '../utils/alert';
 import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
 
-const SEVERITY_CONFIG = {
-  critical: { color: COLORS.danger, bg: COLORS.dangerLight, label: 'CRÍTICO', icon: '🚨' },
-  high: { color: '#D97706', bg: COLORS.warningLight, label: 'ALTO', icon: '⚠️' },
-  medium: { color: COLORS.info, bg: COLORS.infoLight, label: 'MÉDIO', icon: 'ℹ️' },
-};
+const createSeverityConfig = (colors: ThemeColors, isDark: boolean) => ({
+  critical: { color: colors.danger, bg: colors.dangerLight, label: 'CRÍTICO', icon: '🚨' },
+  high: { color: isDark ? colors.warning : '#D97706', bg: colors.warningLight, label: 'ALTO', icon: '⚠️' },
+  medium: { color: colors.info, bg: colors.infoLight, label: 'MÉDIO', icon: 'ℹ️' },
+});
 
 function SignCard({ sign }) {
-  const cfg = SEVERITY_CONFIG[sign.severity];
+  const { colors, isDark } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const cfg = createSeverityConfig(colors, isDark)[sign.severity];
   return (
     <Card style={[styles.signCard, { borderLeftColor: cfg.color, borderLeftWidth: 4 }]}>
       <View style={styles.signRow}>
@@ -37,6 +40,8 @@ function SignCard({ sign }) {
 }
 
 export default function EmergencyScreen() {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [activeTab, setActiveTab] = useState('signs');
 
   const criticals = EMERGENCY_SIGNS.filter(s => s.severity === 'critical');
@@ -208,11 +213,11 @@ export default function EmergencyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
 
   emergencyBanner: {
-    backgroundColor: COLORS.danger,
+    backgroundColor: colors.danger,
     padding: SPACING.base,
     flexDirection: 'row',
     alignItems: 'center',
@@ -221,7 +226,7 @@ const styles = StyleSheet.create({
   emergencyTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.white,
+    color: colors.white,
   },
   emergencySubtitle: {
     fontSize: FONT_SIZES.xs,
@@ -240,13 +245,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.3)',
   },
   callIcon: { fontSize: 16 },
-  callText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
+  callText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
 
   tabs: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: colors.border,
   },
   tab: {
     flex: 1,
@@ -255,9 +260,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: 'transparent',
   },
-  activeTab: { borderBottomColor: COLORS.primary },
-  tabText: { fontSize: FONT_SIZES.sm, fontWeight: FONT_WEIGHTS.semibold, color: COLORS.textMuted },
-  activeTabText: { color: COLORS.primary },
+  activeTab: { borderBottomColor: colors.primary },
+  tabText: { fontSize: FONT_SIZES.sm, fontWeight: FONT_WEIGHTS.semibold, color: colors.textMuted },
+  activeTabText: { color: colors.primary },
 
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
@@ -277,7 +282,7 @@ const styles = StyleSheet.create({
   signText: {
     fontSize: FONT_SIZES.sm,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
     flex: 1,
   },
   severityBadge: {
@@ -294,41 +299,41 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 9,
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  protocolStepNum: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
+  protocolStepNum: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.sm },
   protocolIcon: { fontSize: 22, marginTop: 2 },
   protocolContent: { flex: 1 },
-  protocolTitle: { fontSize: FONT_SIZES.base, fontWeight: FONT_WEIGHTS.bold, color: COLORS.textPrimary, marginBottom: 2 },
-  protocolDesc: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, lineHeight: 20 },
+  protocolTitle: { fontSize: FONT_SIZES.base, fontWeight: FONT_WEIGHTS.bold, color: colors.textPrimary, marginBottom: 2 },
+  protocolDesc: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, lineHeight: 20 },
 
-  toxicCard: { marginTop: SPACING.md, borderColor: COLORS.danger },
+  toxicCard: { marginTop: SPACING.md, borderColor: colors.danger },
   toxicTitle: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.danger,
+    color: colors.danger,
     marginBottom: SPACING.sm,
   },
   toxicItem: { flexDirection: 'row', gap: SPACING.xs, marginBottom: 4 },
-  toxicDot: { color: COLORS.danger, fontWeight: FONT_WEIGHTS.bold },
-  toxicText: { fontSize: FONT_SIZES.sm, color: COLORS.textSecondary, flex: 1 },
+  toxicDot: { color: colors.danger, fontWeight: FONT_WEIGHTS.bold },
+  toxicText: { fontSize: FONT_SIZES.sm, color: colors.textSecondary, flex: 1 },
 
   fixedCta: {
     padding: SPACING.base,
     paddingBottom: SPACING.lg,
-    backgroundColor: COLORS.white,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: colors.border,
     ...SHADOWS.lg,
   },
   ctaBtn: {
-    backgroundColor: COLORS.danger,
+    backgroundColor: colors.danger,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.base,
     alignItems: 'center',
     ...SHADOWS.danger,
   },
-  ctaBtnText: { color: COLORS.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
+  ctaBtnText: { color: colors.white, fontWeight: FONT_WEIGHTS.bold, fontSize: FONT_SIZES.base },
 });

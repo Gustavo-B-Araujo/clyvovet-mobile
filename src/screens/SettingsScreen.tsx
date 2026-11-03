@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View, Text, ScrollView, StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, SPACING, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
+import { useTheme } from '../context/ThemeContext';
 import { usePetProfile } from '../hooks/usePetProfile';
 import { useAuth } from '../context/AuthContext';
 import { useTutor } from '../hooks/useTutor';
@@ -14,6 +15,8 @@ import Card from '../components/Card';
 import SectionHeader from '../components/SectionHeader';
 
 function SettingRow({ icon, label, subtitle, onPress, rightElement, isLast = false }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -35,6 +38,8 @@ function SettingRow({ icon, label, subtitle, onPress, rightElement, isLast = fal
 }
 
 export default function SettingsScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { pet, hasPet } = usePetProfile();
   const { user, logout } = useAuth();
   const { tutor } = useTutor();
@@ -187,15 +192,15 @@ export default function SettingsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: COLORS.background },
+const createStyles = (colors: ThemeColors) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
   scroll: { flex: 1 },
   content: { padding: SPACING.base },
 
   profileBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
+    backgroundColor: colors.primary,
     borderRadius: BORDER_RADIUS['2xl'],
     padding: SPACING.base,
     marginBottom: SPACING.lg,
@@ -217,7 +222,7 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.white,
+    color: colors.white,
   },
   profileMeta: { fontSize: FONT_SIZES.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   profileChevron: { fontSize: 22, color: 'rgba(255,255,255,0.6)', fontWeight: FONT_WEIGHTS.bold },
@@ -229,7 +234,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
+    borderBottomColor: colors.divider,
     gap: SPACING.md,
   },
   lastRow: { borderBottomWidth: 0 },
@@ -237,7 +242,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -246,16 +251,16 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: FONT_SIZES.base,
     fontWeight: FONT_WEIGHTS.semibold,
-    color: COLORS.textPrimary,
+    color: colors.textPrimary,
   },
   settingSubtitle: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: 1,
   },
   settingChevron: {
     fontSize: 22,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     fontWeight: FONT_WEIGHTS.bold,
   },
 
@@ -263,18 +268,18 @@ const styles = StyleSheet.create({
   footerLogo: {
     fontSize: FONT_SIZES.lg,
     fontWeight: FONT_WEIGHTS.extrabold,
-    color: COLORS.primary,
+    color: colors.primary,
     letterSpacing: 2,
     marginBottom: 4,
   },
   footerTagline: {
     fontSize: FONT_SIZES.sm,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginBottom: 4,
   },
   footerVersion: {
     fontSize: FONT_SIZES.xs,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     opacity: 0.6,
   },
 });
