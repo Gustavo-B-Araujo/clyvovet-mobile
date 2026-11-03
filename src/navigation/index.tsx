@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { COLORS, FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS } from '../constants/theme';
+import { FONT_SIZES, FONT_WEIGHTS, BORDER_RADIUS, SHADOWS, ThemeColors } from '../constants/theme';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useMedicationReminderSync, useMedicationNotificationNavigation } from '../hooks/useMedicationReminders';
 
 import LoginScreen from '../screens/LoginScreen';
@@ -37,9 +38,76 @@ const VetStackNav = createNativeStackNavigator();
 const AuthStackNav = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Tema do React Navigation (fundo, cartões e bordas) alinhado à paleta ativa.
+function useNavigationTheme() {
+  const { colors, isDark } = useTheme();
+  return useMemo(() => {
+    const base = isDark ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.primary,
+        background: colors.background,
+        card: colors.surface,
+        text: colors.textPrimary,
+        border: colors.border,
+        notification: colors.danger,
+      },
+    };
+  }, [colors, isDark]);
+}
+
+function useStackScreenOptions() {
+  const { colors } = useTheme();
+  return useMemo(
+    () => ({
+      headerStyle: {
+        backgroundColor: colors.surface,
+      },
+      headerShadowVisible: false,
+      headerTitleStyle: {
+        fontSize: FONT_SIZES.lg,
+        fontWeight: FONT_WEIGHTS.bold,
+        color: colors.textPrimary,
+      },
+      headerTintColor: colors.primary,
+      headerBackTitle: '',
+      contentStyle: {
+        backgroundColor: colors.background,
+      },
+    }),
+    [colors]
+  );
+}
+
+function useTabScreenOptions() {
+  const { colors } = useTheme();
+  return useMemo(
+    () => ({
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: colors.surface,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
+        height: 72,
+        paddingBottom: 8,
+        paddingTop: 4,
+        ...SHADOWS.lg,
+      },
+      tabBarShowLabel: false,
+    }),
+    [colors]
+  );
+}
+
 function AuthStack() {
+  const { colors } = useTheme();
+
   return (
-    <AuthStackNav.Navigator screenOptions={{ headerShown: false }}>
+    <AuthStackNav.Navigator
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}
+    >
       <AuthStackNav.Screen name="Login" component={LoginScreen} />
       <AuthStackNav.Screen name="Signup" component={SignupScreen} />
     </AuthStackNav.Navigator>
@@ -47,6 +115,9 @@ function AuthStack() {
 }
 
 function TabIcon({ emoji, label, focused }) {
+  const { colors } = useTheme();
+  const tabStyles = useMemo(() => createTabStyles(colors), [colors]);
+
   return (
     <View style={[tabStyles.iconWrapper, focused && tabStyles.iconWrapperActive]}>
       <Text style={tabStyles.emoji}>{emoji}</Text>
@@ -55,7 +126,7 @@ function TabIcon({ emoji, label, focused }) {
   );
 }
 
-const tabStyles = StyleSheet.create({
+const createTabStyles = (colors: ThemeColors) => StyleSheet.create({
   iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -66,7 +137,7 @@ const tabStyles = StyleSheet.create({
     minWidth: 60,
   },
   iconWrapperActive: {
-    backgroundColor: COLORS.primaryPastel,
+    backgroundColor: colors.primaryPastel,
   },
   emoji: {
     fontSize: 22,
@@ -74,32 +145,20 @@ const tabStyles = StyleSheet.create({
   label: {
     fontSize: 10,
     fontWeight: FONT_WEIGHTS.medium,
-    color: COLORS.textMuted,
+    color: colors.textMuted,
     marginTop: 2,
   },
   labelActive: {
-    color: COLORS.primary,
+    color: colors.primary,
     fontWeight: FONT_WEIGHTS.bold,
   },
 });
 
 function MainTabs() {
+  const screenOptions = useTabScreenOptions();
+
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: COLORS.white,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.border,
-          height: 72,
-          paddingBottom: 8,
-          paddingTop: 4,
-          ...SHADOWS.lg,
-        },
-        tabBarShowLabel: false,
-      }}
-    >
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -149,24 +208,9 @@ function MainTabs() {
   );
 }
 
-const screenOptions = {
-  headerStyle: {
-    backgroundColor: COLORS.white,
-  },
-  headerShadowVisible: false,
-  headerTitleStyle: {
-    fontSize: FONT_SIZES.lg,
-    fontWeight: FONT_WEIGHTS.bold,
-    color: COLORS.textPrimary,
-  },
-  headerTintColor: COLORS.primary,
-  headerBackTitle: '',
-  contentStyle: {
-    backgroundColor: COLORS.background,
-  },
-};
-
 function AppStack() {
+  const { colors } = useTheme();
+  const screenOptions = useStackScreenOptions();
   useMedicationReminderSync();
   useMedicationNotificationNavigation();
 
@@ -229,13 +273,13 @@ function AppStack() {
         component={EmergencyScreen}
         options={{
           title: 'Emergência',
-          headerStyle: { backgroundColor: COLORS.danger },
+          headerStyle: { backgroundColor: colors.danger },
           headerTitleStyle: {
             fontSize: FONT_SIZES.lg,
             fontWeight: FONT_WEIGHTS.bold,
-            color: COLORS.white,
+            color: colors.white,
           },
-          headerTintColor: COLORS.white,
+          headerTintColor: colors.white,
         }}
       />
     </Stack.Navigator>
@@ -243,22 +287,10 @@ function AppStack() {
 }
 
 function VetTabs() {
+  const screenOptions = useTabScreenOptions();
+
   return (
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: COLORS.white,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.border,
-          height: 72,
-          paddingBottom: 8,
-          paddingTop: 4,
-          ...SHADOWS.lg,
-        },
-        tabBarShowLabel: false,
-      }}
-    >
+    <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
         name="VetConsultas"
         component={VetConsultasScreen}
@@ -291,6 +323,8 @@ function VetTabs() {
 }
 
 function VetStack() {
+  const screenOptions = useStackScreenOptions();
+
   return (
     <VetStackNav.Navigator screenOptions={screenOptions}>
       <VetStackNav.Screen
@@ -334,25 +368,27 @@ function VetStack() {
 
 export default function AppNavigator() {
   const { user, initializing } = useAuth();
+  const { colors } = useTheme();
+  const navigationTheme = useNavigationTheme();
 
   if (initializing) {
     return (
-      <View style={loadingStyles.container}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+      <View style={[loadingStyles.container, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   if (!user) {
     return (
-      <NavigationContainer>
+      <NavigationContainer theme={navigationTheme}>
         <AuthStack />
       </NavigationContainer>
     );
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       {user.role === 'VETERINARIO' ? <VetStack /> : <AppStack />}
     </NavigationContainer>
   );
@@ -363,6 +399,5 @@ const loadingStyles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.background,
   },
 });
