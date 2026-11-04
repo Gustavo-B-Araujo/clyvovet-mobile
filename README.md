@@ -5,6 +5,10 @@ Aplicativo mobile do Clyvo Vet, construído com [Expo](https://expo.dev) e React
 - **Tutor**: cadastra seu pet, acompanha carteira de vacinação, histórico clínico, medicamentos/lembretes e agenda consultas com veterinários.
 - **Veterinário**: acompanha as consultas atendidas, cria novas consultas para pacientes já atendidos, emite receitas (vinculadas à consulta) e gerencia os próprios dados de conta.
 
+## Vídeo de apresentação
+
+https://youtu.be/NEwAD3jG4t8
+
 ## Funcionalidades
 
 **Tutor**
