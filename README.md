@@ -5,8 +5,6 @@ Aplicativo mobile do Clyvo Vet, construído com [Expo](https://expo.dev) e React
 - **Tutor**: cadastra seu pet, acompanha carteira de vacinação, histórico clínico, medicamentos/lembretes e agenda consultas com veterinários.
 - **Veterinário**: acompanha as consultas atendidas, cria novas consultas para pacientes já atendidos, emite receitas (vinculadas à consulta) e gerencia os próprios dados de conta.
 
-Vídeo de demonstração: https://youtu.be/SlxU2w0kIjw
-
 ## Funcionalidades
 
 **Tutor**
@@ -42,8 +40,6 @@ O app usa **notificações locais** (`expo-notifications`) como lembrete de medi
 - Os lembretes são reagendados sempre que a lista de medicamentos é carregada. Para o medicamento diário, o app agenda os próximos 7 dias; por isso, abrir o app ao menos uma vez por semana mantém os lembretes em dia.
 - Ao encerrar a sessão, os lembretes pendentes são cancelados.
 
-Para validar as notificações, use o APK gerado pelo EAS (veja [Publicação](#publicação)): o Expo Go tem limitações com o `expo-notifications`.
-
 ## Tema claro e escuro
 
 O app tem tema claro e escuro. Em **Configurações → Aparência** é possível escolher entre **Sistema** (acompanha o tema do celular), **Claro** e **Escuro**. A escolha é salva e mantida ao reabrir o app.
@@ -51,6 +47,9 @@ O app tem tema claro e escuro. Em **Configurações → Aparência** é possíve
 ## Sobre o App e versão
 
 Em **Configurações → Sobre o App** são exibidas a versão e o **hash do commit** que originou o build. O hash é injetado em `app.config.js` (`EAS_BUILD_GIT_COMMIT_HASH` no build do EAS, com `git rev-parse HEAD` como alternativa em build local) e lido com `expo-constants`. Um sufixo `-dirty` indica um build local feito com alterações ainda não commitadas.
+
+O back-end foi publicada na Azure, o link estará disponível até o final das avaliações: app-clyvo-api.azurewebsites.net.
+O repositório com o projeto Java está disponível em: https://github.com/Gustavo-B-Araujo/clyvovet-api-java
 
 ## Stack
 
@@ -63,7 +62,7 @@ Em **Configurações → Sobre o App** são exibidas a versão e o **hash do com
 - [`expo-notifications`](https://docs.expo.dev/versions/latest/sdk/notifications/) para notificações locais
 - [EAS Build](https://docs.expo.dev/build/introduction/) para gerar o APK e [Firebase App Distribution](https://firebase.google.com/docs/app-distribution) para distribuí-lo
 
-O app consome uma API REST (Spring Boot) própria do Clyvo Vet — a URL é configurada via variável de ambiente (veja abaixo).
+O app consome uma API REST (Spring Boot) própria do Clyvo Vet.
 
 ## Estrutura do projeto
 
@@ -82,70 +81,9 @@ src/
   utils/          Utilitários genéricos
 ```
 
-## Pré-requisitos
-
-- [Node.js](https://nodejs.org/) e npm
-- Um backend do Clyvo Vet (API REST) — o repositório do backend é separado deste projeto. Por padrão o app usa a API publicada no Azure (`https://app-clyvo-api.azurewebsites.net`), então não é preciso subir um backend local
-- Para rodar no celular: o [Expo Go](https://expo.dev/go); para emuladores, Android Studio ou Xcode
-
-## Como rodar
-
-1. Instale as dependências:
-
-   ```bash
-   npm install
-   ```
-
-2. Configure a URL da API. Copie `.env.example` para `.env`. O arquivo já aponta para a API publicada no Azure, que pode ser usada sem alterações. Para usar um backend local, ajuste `EXPO_PUBLIC_API_URL` conforme onde o app for executado:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   | Ambiente | URL sugerida |
-   |---|---|
-   | Emulador Android | `http://10.0.2.2:8080` |
-   | Simulador iOS | `http://localhost:8080` |
-   | Celular físico (Expo Go) | `http://<IP-da-sua-máquina-na-rede>:8080` |
-
-3. Inicie o app:
-
-   ```bash
-   npx expo start
-   ```
-
-   No terminal, escolha abrir em um emulador Android, simulador iOS, no navegador (web) ou escaneando o QR code com o Expo Go.
-
-## Scripts disponíveis
-
-```bash
-npm start      # expo start
-npm run android
-npm run ios
-npm run web
-```
-
 ## Publicação
 
 O app é distribuído como APK pelo **Firebase App Distribution**. O APK é gerado pelo EAS Build (perfis em `eas.json`).
-
-1. Faça login no EAS e confirme que o código a ser publicado já está commitado e enviado ao GitHub (o hash do commit é gravado no build):
-
-   ```bash
-   npx eas-cli login
-   git status
-   git push
-   ```
-
-2. Gere o APK de distribuição interna:
-
-   ```bash
-   npx eas-cli build --platform android --profile preview
-   ```
-
-3. Baixe o `.apk` gerado, envie-o em **Firebase Console → App Distribution** e adicione os testers (incluindo o e-mail institucional do professor).
-
-4. Instale o app pelo link do convite e confira em **Configurações → Sobre o App** se o hash exibido é o do commit publicado.
 
 | Item | Valor |
 |---|---|
